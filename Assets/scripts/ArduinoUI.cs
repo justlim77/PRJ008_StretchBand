@@ -26,12 +26,11 @@ public class ArduinoUI : MonoBehaviour
     public Dropdown portDropdown;
 
     [Header("Band Variables")]
+    //public Text outputLabel;
     public int force;
     public int count;
 
     string outputString;
-
-    GameManager gameManager;
 
     void Awake()
     {
@@ -42,8 +41,6 @@ public class ArduinoUI : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        gameManager = GameManager.Instance;
-
         portDropdown.onValueChanged.AddListener(delegate { OnDropdownValueChanged(); });
         refreshButton.onClick.AddListener(delegate { RefreshPortList(); });
         connectButton.onClick.AddListener(delegate { Open(); });
@@ -51,6 +48,22 @@ public class ArduinoUI : MonoBehaviour
 
         UpdatePortDropdown();
         OnDropdownValueChanged();
+    }
+
+    void OnEnable()
+    {
+        ArduinoController.Output += OnOutputReceived;
+    }
+
+    void OnDisable()
+    {
+        ArduinoController.Output -= OnOutputReceived;
+    }
+
+    private void OnOutputReceived(object sender, object[] args)
+    {
+        string output = string.Format("Force: {0} N\nCount: {1]", args[0], args[1]);
+        outputLabel.text = output;
     }
 
     void Update()
@@ -72,17 +85,23 @@ public class ArduinoUI : MonoBehaviour
     }
 
     int strideCount = 0;
+    int pForce, pCount;
     public void UpdateOutputLabel(string msg)
     {
         strideCount++;
 
         outputLabel.text += string.Format("{0}", msg);
 
+
         if (strideCount == 4)
         {
+            print(msg);
             int.TryParse(outputLabel.text.Substring(0, 2), out force);
             int.TryParse(outputLabel.text.Substring(2, 2), out count);
-            Debug.Log(string.Format("force {1}, count {2}", force, count));
+            if(force != pForce || count != pCount)
+                Debug.Log(string.Format("Force: {1}N | Count: {2}", force, count));
+            pForce = force; // Cache force
+            pCount = count; // Cache count
             strideCount = 0;
             outputLabel.text = "";
         }
@@ -113,9 +132,9 @@ public class ArduinoUI : MonoBehaviour
         valueLabel.text = string.Format("Count: {0}\nForce: {1}", count, outputString);
     }
 
-    public void UpdateDistance(float distance)
+    public void UpdateDistance(float distance, float distanceToTravel)
     {
-        distanceLabel.text = string.Format("{0:F0} / {1} m", distance, gameManager.distanceToTravel);
+        distanceLabel.text = string.Format("{0:F0} / {1} m", distance, distanceToTravel);
     }
 
     public void UpdateTimer(float time)

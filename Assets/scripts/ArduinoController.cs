@@ -6,6 +6,10 @@ using System.Text;
 public class ArduinoController : MonoBehaviour
 {
     public static ArduinoController Instance { get; private set; }
+
+    public delegate void OutputReceived(object sender, object[] args);
+    public static event OutputReceived Output;
+
     public ArduinoConnector connector;
     public ArduinoUI UI;
     public int readTimeout = 5000;
@@ -28,7 +32,7 @@ public class ArduinoController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        _sb = new StringBuilder();
+        _sb = new StringBuilder(4, 8);
         totalStrideLength = forceStrideLength + countStrideLength;
 
         //connector.Open();
@@ -55,21 +59,40 @@ public class ArduinoController : MonoBehaviour
         //ProcessStream(Convert.ToChar(i).ToString());
     }
 
-    private int strideCount = 0;
+    int strideCount = 0;
+    int pForce, pCount;
     public void ProcessStream(string msg)
     {
         strideCount++;
 
         _sb.Append(msg);
         streamMessage = _sb.ToString();
-        //Debug.Log(_sb.ToString());
         if (strideCount >= totalStrideLength)
         {
             int.TryParse(streamMessage.Substring(0, forceStrideLength), out force);
             int.TryParse(streamMessage.Substring(countStrideLength, countStrideLength), out count);
-            Debug.Log(string.Format("force {0}, count {1}", force, count));
-            _sb.Length = strideCount = 0;
+
+            // Only log 
+            if (force != pForce || count != pCount)
+            {
+                Debug.Log(string.Format("Force: {0} N | Count: {1}", force, count));
+                OnReceiveOutput(force, count);
+            }
+
+            // Cache new values
+            pForce = force;
+            pCount = count;
+
+            // Clear for next buffer
+            strideCount = 0;
+            _sb.Clear();
         }
+    }
+
+    public void OnReceiveOutput(int force, int count)
+    {
+        object[] args = new object[] { force, count };
+        Output(this, args);
     }
 
     public bool ForceDetected(int threshhold = 0, bool inclusive = false)

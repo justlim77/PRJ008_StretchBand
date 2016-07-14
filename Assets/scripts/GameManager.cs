@@ -4,6 +4,7 @@ using System;
 
 public enum GameState
 {
+    None,
     Pregame,
     Playing,
     End
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
+        SetState(GameState.Pregame);
     }
 
     bool updateStats = false;
@@ -65,7 +66,7 @@ public class GameManager : MonoBehaviour
 
     void UpdateStats()
     {
-        ArduinoUI.Instance.UpdateDistance(bird.Distance);
+        ArduinoUI.Instance.UpdateDistance(bird.Distance, distanceToTravel);
         ArduinoUI.Instance.UpdateTimer(ElapsedTime);
     }
 
