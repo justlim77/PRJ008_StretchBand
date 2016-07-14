@@ -2,14 +2,15 @@
 using System.Collections;
 using System;
 
+public enum GameState
+{
+    Pregame,
+    Playing,
+    End
+}
+
 public class GameManager : MonoBehaviour
 {
-    public enum GameState
-    {
-        Pregame,
-        Playing,
-        End
-    }
 
     public string pregameMessage;
     public string endgameMessage;
@@ -77,7 +78,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void SetState(GameState state)
+    public void SetState(GameState state)
     {
         if (gameState == state)
             return;

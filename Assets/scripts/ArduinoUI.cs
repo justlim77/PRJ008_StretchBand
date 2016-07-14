@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Text;
 using System;
+using System.IO.Ports;
+using System.Collections.Generic;
 
 public class ArduinoUI : MonoBehaviour
 {
@@ -12,6 +14,10 @@ public class ArduinoUI : MonoBehaviour
     public Text distanceLabel;
     public Text timerLabel;
     public Text messageLabel;
+
+    public Button connectButton;
+    public Button disconnectButton;
+    public Dropdown portDropdown;
 
     public int force;
     public int count;
@@ -25,15 +31,28 @@ public class ArduinoUI : MonoBehaviour
             Instance = this;
     }
 
-    void OnDestroy()
-    {
-        Instance = null;
-    }
-
 	// Use this for initialization
 	void Start ()
     {
         gameManager = GameManager.Instance;
+
+        portDropdown.onValueChanged.AddListener(delegate { OnDropdownValueChanged(); });
+        connectButton.onClick.AddListener(delegate { ArduinoConnector.Instance.Open(); });
+        disconnectButton.onClick.AddListener(delegate { ArduinoConnector.Instance.Close(); });
+
+        UpdatePortDropdown();
+
+        OnDropdownValueChanged();
+    }
+
+    void OnDropdownValueChanged()
+    {
+        ArduinoConnector.Instance.SetPort(portDropdown.options[portDropdown.value].text);
+    }
+
+    void OnDestroy()
+    {
+        Instance = null;
     }
 
     int strideCount = 0;
@@ -103,5 +122,15 @@ public class ArduinoUI : MonoBehaviour
     public void UpdateMessage(string msg)
     {
         messageLabel.text = msg;
+    }
+
+    void UpdatePortDropdown()
+    {
+        portDropdown.ClearOptions();
+        string[] portNames = SerialPort.GetPortNames();
+        foreach (string name in portNames)
+            name.ToUpper();
+        List<string> portList = new List<string>(portNames);
+        portDropdown.AddOptions(portList);
     }
 }

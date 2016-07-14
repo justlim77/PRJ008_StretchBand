@@ -18,14 +18,15 @@ public class Bird : MonoBehaviour
 
     Vector3 _force;
     Vector3 _originalPosition;
-
-    Rigidbody rb;
+    Rigidbody _rb;
+    ArduinoController _controller;
 
 	// Use this for initialization
 	void Start ()
     {
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
         _originalPosition = transform.position;
+        _controller = ArduinoController.Instance;
 
         Reset();
 	}
@@ -47,16 +48,23 @@ public class Bird : MonoBehaviour
     bool forceApplied = false;
     void Update()
     {
+        GameManager manager = GameManager.Instance;
+
+        // Check for initial stretch to start
+        if (manager.gameState.Equals(GameState.Pregame) && _controller.ForceDetected())
+        {
+            manager.SetState(GameState.Playing);
+            Boost();
+        }
+
         CheckForce();
         UpdateDistance();
 
+        // Spacebar start
         if (Input.GetKeyDown(boostKey) && forceApplied == false)
         {
-            boostParticles.Play();
             forceApplied = true;
-            _force *= boostMultiplier;
-            ArduinoUI.Instance.UpdateMessage("BOOSTING!");
-            Invoke("CancelForce", boostTime);
+            Boost();
         }
     }
 
@@ -72,34 +80,33 @@ public class Bird : MonoBehaviour
 
     void Move()
     {
-        rb.MovePosition(rb.position + _force * Time.deltaTime);
+        _rb.MovePosition(_rb.position + _force * Time.deltaTime);
     }
 
     void CheckForce()
     {
-        ArduinoController controller = ArduinoController.Instance;
+        if (_controller.ForceDetected(forceThreshold))
+        {
+            Boost();
+        }
+    }    
 
-        if (forceApplied == false)
-        {
-            if (controller.force >= forceThreshold)
-            {
-                boostParticles.Play();
-                forceApplied = true;
-                _force *= boostMultiplier;
-                Invoke("CancelForce", boostTime);
-            }
-        }
-        else
-        {
-            if (controller.force < forceThreshold)
-            {
-                forceApplied = false;
-            }
-        }
+    void Boost()
+    {
+        if (forceApplied == true)
+            return;
+
+        forceApplied = true;
+        boostParticles.Play();
+        _force *= boostMultiplier;
+        ArduinoUI.Instance.UpdateMessage("BOOSTING!");
+
+        Invoke("CancelBoost", boostTime);
     }
 
-    void CancelForce()
+    void CancelBoost()
     {
+        forceApplied = false;
         boostParticles.Stop();
         _force = movementForce;
         ArduinoUI.Instance.UpdateMessage("");

@@ -9,6 +9,7 @@ public class TileManager : MonoBehaviour
     public GameObject tilePrefab;
     public List<GameObject> tiles = new List<GameObject>();
     public int tilesToCache = 5;
+    public int tilesToSpawn = 3;
 
     Vector3 _lastTilePos;
 
@@ -35,7 +36,7 @@ public class TileManager : MonoBehaviour
             tiles.Add(tile);
         }
 
-        Spawn(5);
+        Spawn(tilesToSpawn);
 	}
 
     GameObject GetTile()
@@ -47,7 +48,7 @@ public class TileManager : MonoBehaviour
             if (tile.activeSelf == false)
             {
                 retVal = tile;
-                break;
+                continue;
             }
         }
 
@@ -91,7 +92,13 @@ public class TileManager : MonoBehaviour
 
     public void Reset()
     {
+        foreach (var tile in tiles)
+        {
+            tile.SetActive(false);
+            tile.transform.position = Vector3.zero;
+        }
         _lastTilePos = startPosition;
-        Spawn(tilesToCache);
+        firstTile = true;
+        Spawn(tilesToSpawn);
     }
 }
