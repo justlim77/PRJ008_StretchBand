@@ -12,7 +12,6 @@ public class ArduinoUI : MonoBehaviour
 
     [Header("Labels")]
     public Text outputLabel;
-    public Text valueLabel;
     public Text distanceLabel;
     public Text timerLabel;
     public Text messageLabel;
@@ -105,31 +104,6 @@ public class ArduinoUI : MonoBehaviour
             strideCount = 0;
             outputLabel.text = "";
         }
-    }
-
-    public void UpdateValueLabel(string msg)
-    {
-        int value;
-
-        outputString += msg;
-
-        if (msg == " ")
-        {
-            //count = int.TryParse(outputString.)
-        }
-
-        bool readable;
-        readable = int.TryParse(msg, out value);
-        if (readable)
-        {
-            outputString += msg;
-        }
-        else
-        {
-            outputString = "";
-        }
-
-        valueLabel.text = string.Format("Count: {0}\nForce: {1}", count, outputString);
     }
 
     public void UpdateDistance(float distance, float distanceToTravel)
