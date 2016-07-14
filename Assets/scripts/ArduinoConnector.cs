@@ -34,23 +34,24 @@ public class ArduinoConnector : MonoBehaviour
     [Tooltip("The wait interval between serial reads (Default is 0.05f)")]
     public float waitBetweenReads = 0.05f;
 
-    private Thread thread;
-    private SerialPort stream;
-    private WaitForSeconds waitForSeconds;
-    private bool running;
+    private Thread _thread;
+    private SerialPort _stream;
+    private WaitForSeconds _waitForSeconds;
+    private bool _running;
+    private string[] _ports;
 
     void Awake()
     {
         if (Instance == null)
             Instance = this;
 
-        waitForSeconds = new WaitForSeconds(waitBetweenReads);
+        _waitForSeconds = new WaitForSeconds(waitBetweenReads);
     }
 
     public void Open()
     {
         // Opens the serial port
-        stream = new SerialPort(port, baudrate, parity, dataBits, stopBits);
+        _stream = new SerialPort(port, baudrate, parity, dataBits, stopBits);
         Debug.Log("Open connection started...");
 
         //stream.DataReceived += (x,e) =>
@@ -69,10 +70,10 @@ public class ArduinoConnector : MonoBehaviour
 
         try
         {
-            if (stream != null)
+            if (_stream != null)
             {
-                stream.Open();
-                stream.ReadTimeout = readTimeout;
+                _stream.Open();
+                _stream.ReadTimeout = readTimeout;
                 Debug.Log("Port opened!");
                 //this.stream.DataReceived += DataReceivedHandler;
                 //this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -80,7 +81,7 @@ public class ArduinoConnector : MonoBehaviour
             }
             else
             {
-                if (stream.IsOpen)
+                if (_stream.IsOpen)
                 {
                     print("Port is already open.");
                 }
@@ -97,28 +98,36 @@ public class ArduinoConnector : MonoBehaviour
             Debug.LogWarning("Could not open serial port: " + e.Message);
         }
 
-        running = true;
+        _running = true;
         ThreadStart ts = new ThreadStart(ReadByte);
-        thread = new Thread(ts);
-        thread.Start();
+        _thread = new Thread(ts);
+        _thread.Start();
     }
 
     public void Close()
     {
         Debug.Log("Close connection started...");
 
-        if (stream != null)
+        if (_stream != null)
         {
-            stream.Close();
+            _stream.Close();
             Debug.Log("Stream closed.");
         }
 
-        running = false;    // stop listening thread
+        _running = false;    // stop listening thread
 
-        thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
+        if(_thread != null)
+            _thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
 
         Debug.Log("Close connection completed.");
     }
+
+    public void RefreshPortList()
+    {
+        PortList = SerialPort.GetPortNames();
+    }
+
+    public string[] PortList { get; private set; }
 
     private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
     {
@@ -130,16 +139,16 @@ public class ArduinoConnector : MonoBehaviour
     public void WriteToArduino(string message)
     {
         // Send the request
-        stream.WriteLine(message);
-        stream.BaseStream.Flush();
+        _stream.WriteLine(message);
+        _stream.BaseStream.Flush();
     }
 
     public string ReadStringFromArduino(int timeout = 0)
     {
-        stream.ReadTimeout = timeout;
+        _stream.ReadTimeout = timeout;
         try
         {
-            return stream.ReadLine();
+            return _stream.ReadLine();
         }
         catch (TimeoutException)
         {
@@ -149,10 +158,10 @@ public class ArduinoConnector : MonoBehaviour
 
     public int ReadByteFromArduino(int timeout = 0)
     {
-        stream.ReadTimeout = timeout;
+        _stream.ReadTimeout = timeout;
         try
         {
-            return Convert.ToInt32(stream.ReadByte());
+            return Convert.ToInt32(_stream.ReadByte());
         }
         catch (TimeoutException)
         {
@@ -174,7 +183,7 @@ public class ArduinoConnector : MonoBehaviour
             // A single read attempt
             try
             {
-                dataString = stream.ReadLine();
+                dataString = _stream.ReadLine();
                 //dataString = stream.ReadExisting();
             }
             catch (TimeoutException)
@@ -188,7 +197,7 @@ public class ArduinoConnector : MonoBehaviour
                 yield return null;
             }
             else
-                yield return waitForSeconds;
+                yield return _waitForSeconds;
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
@@ -213,8 +222,8 @@ public class ArduinoConnector : MonoBehaviour
             // A single read attempt
             try
             {
-                dataString = stream.ReadByte();
-                stream.BaseStream.Flush();
+                dataString = _stream.ReadByte();
+                _stream.BaseStream.Flush();
             }
             catch (TimeoutException)
             {
@@ -227,7 +236,7 @@ public class ArduinoConnector : MonoBehaviour
                 yield return null;
             }
             else
-                yield return waitForSeconds;
+                yield return _waitForSeconds;
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
@@ -246,9 +255,9 @@ public class ArduinoConnector : MonoBehaviour
         print("Thread running");
         try
         {
-            while (running)
+            while (_running)
             {
-                Output = stream.ReadByte();
+                Output = _stream.ReadByte();
                 ArduinoController.Instance.ProcessStream(Convert.ToChar(Output).ToString());
             }
         }

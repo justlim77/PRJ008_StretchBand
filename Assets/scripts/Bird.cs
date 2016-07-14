@@ -33,7 +33,9 @@ public class Bird : MonoBehaviour
 
     public void Reset()
     {
+        CancelInvoke();
         transform.position = _originalPosition;
+        Distance = 0;
         SetInMotion(false);
         _force = Vector3.zero;
         boostParticles.Stop();

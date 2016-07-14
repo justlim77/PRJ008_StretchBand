@@ -9,19 +9,27 @@ using System.Collections.Generic;
 public class ArduinoUI : MonoBehaviour
 {
     public static ArduinoUI Instance { get; private set; }
+
+    [Header("Labels")]
     public Text outputLabel;
     public Text valueLabel;
     public Text distanceLabel;
     public Text timerLabel;
     public Text messageLabel;
 
+    [Header("Connection Canvas")]
+    public KeyCode toggleConnectionCanvasKey = KeyCode.BackQuote;
+    public GameObject connectionCanvas;
+    public Button refreshButton;
     public Button connectButton;
     public Button disconnectButton;
     public Dropdown portDropdown;
 
+    [Header("Band Variables")]
     public int force;
     public int count;
-    public string outputString;
+
+    string outputString;
 
     GameManager gameManager;
 
@@ -37,12 +45,20 @@ public class ArduinoUI : MonoBehaviour
         gameManager = GameManager.Instance;
 
         portDropdown.onValueChanged.AddListener(delegate { OnDropdownValueChanged(); });
-        connectButton.onClick.AddListener(delegate { ArduinoConnector.Instance.Open(); });
-        disconnectButton.onClick.AddListener(delegate { ArduinoConnector.Instance.Close(); });
+        refreshButton.onClick.AddListener(delegate { RefreshPortList(); });
+        connectButton.onClick.AddListener(delegate { Open(); });
+        disconnectButton.onClick.AddListener(delegate { Close(); });
 
         UpdatePortDropdown();
-
         OnDropdownValueChanged();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(toggleConnectionCanvasKey))
+        {
+            connectionCanvas.SetActive(!connectionCanvas.activeSelf);
+        }
     }
 
     void OnDropdownValueChanged()
@@ -127,10 +143,27 @@ public class ArduinoUI : MonoBehaviour
     void UpdatePortDropdown()
     {
         portDropdown.ClearOptions();
-        string[] portNames = SerialPort.GetPortNames();
+        RefreshPortList();
+
+        string[] portNames = ArduinoConnector.Instance.PortList;
         foreach (string name in portNames)
             name.ToUpper();
         List<string> portList = new List<string>(portNames);
         portDropdown.AddOptions(portList);
+    }
+
+    public void Open()
+    {
+        ArduinoConnector.Instance.Open();
+    }
+
+    public void Close()
+    {
+        ArduinoConnector.Instance.Close();
+    }
+
+    public void RefreshPortList()
+    {
+        ArduinoConnector.Instance.RefreshPortList();
     }
 }

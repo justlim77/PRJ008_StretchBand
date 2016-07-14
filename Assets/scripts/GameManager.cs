@@ -11,7 +11,6 @@ public enum GameState
 
 public class GameManager : MonoBehaviour
 {
-
     public string pregameMessage;
     public string endgameMessage;
 
@@ -91,8 +90,8 @@ public class GameManager : MonoBehaviour
                 ResetTimer();
                 ArduinoUI.Instance.UpdateMessage(pregameMessage);
                 bird.Reset();
-                UpdateStats();
                 updateStats = false;
+                UpdateStats();
                 TileManager.Instance.Reset();
                 break;
             case GameState.Playing:
