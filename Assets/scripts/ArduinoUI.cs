@@ -16,6 +16,9 @@ public class ArduinoUI : MonoBehaviour
     public Text timerLabel;
     public Text messageLabel;
 
+    [Header("Sliders")]
+    public Slider distanceSlider;
+
     [Header("Connection Canvas")]
     public KeyCode toggleConnectionCanvasKey = KeyCode.BackQuote;
     public GameObject connectionCanvas;
@@ -24,12 +27,9 @@ public class ArduinoUI : MonoBehaviour
     public Button disconnectButton;
     public Dropdown portDropdown;
 
-    [Header("Band Variables")]
-    //public Text outputLabel;
+    [Header("Band Output Variables")]
     public int force;
     public int count;
-
-    string outputString;
 
     void Awake()
     {
@@ -51,18 +51,18 @@ public class ArduinoUI : MonoBehaviour
 
     void OnEnable()
     {
-        ArduinoController.Output += OnOutputReceived;
+        ArduinoController.OutputReceived += OnOutputReceived;
     }
 
     void OnDisable()
     {
-        ArduinoController.Output -= OnOutputReceived;
+        ArduinoController.OutputReceived -= OnOutputReceived;
     }
 
-    private void OnOutputReceived(object sender, object[] args)
+    private void OnOutputReceived(object sender, OutputReceivedEventArgs e)
     {
-        string output = string.Format("Force: {0} N\nCount: {1]", args[0], args[1]);
-        outputLabel.text = output;
+        force = e.Force;
+        count = e.Count;
     }
 
     void Update()
@@ -83,32 +83,18 @@ public class ArduinoUI : MonoBehaviour
         Instance = null;
     }
 
-    int strideCount = 0;
-    int pForce, pCount;
-    public void UpdateOutputLabel(string msg)
-    {
-        strideCount++;
-
-        outputLabel.text += string.Format("{0}", msg);
-
-
-        if (strideCount == 4)
-        {
-            print(msg);
-            int.TryParse(outputLabel.text.Substring(0, 2), out force);
-            int.TryParse(outputLabel.text.Substring(2, 2), out count);
-            if(force != pForce || count != pCount)
-                Debug.Log(string.Format("Force: {1}N | Count: {2}", force, count));
-            pForce = force; // Cache force
-            pCount = count; // Cache count
-            strideCount = 0;
-            outputLabel.text = "";
-        }
-    }
-
     public void UpdateDistance(float distance, float distanceToTravel)
     {
         distanceLabel.text = string.Format("{0:F0} / {1} m", distance, distanceToTravel);
+        float oldRange = 0 - distanceToTravel;
+        float newRange = distanceSlider.maxValue - distanceSlider.minValue;
+        float sliderValue = ((distance - 0) / (distanceToTravel - 0) ) * newRange + 0;
+        distanceSlider.value = sliderValue;
+    }
+
+    public void UpdateOutput()
+    {
+        outputLabel.text = string.Format("Force: {0} N / Count: {1}", force, count);
     }
 
     public void UpdateTimer(float time)

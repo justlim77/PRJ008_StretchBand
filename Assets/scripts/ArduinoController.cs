@@ -3,12 +3,18 @@ using System.Collections;
 using System;
 using System.Text;
 
+public class OutputReceivedEventArgs : EventArgs
+{
+    public int Force;
+    public int Count;
+}
+
 public class ArduinoController : MonoBehaviour
 {
     public static ArduinoController Instance { get; private set; }
 
-    public delegate void OutputReceived(object sender, object[] args);
-    public static event OutputReceived Output;
+    public delegate void OutputReceivedEventHandler(object sender, OutputReceivedEventArgs e);
+    public static event OutputReceivedEventHandler OutputReceived;
 
     public ArduinoConnector connector;
     public ArduinoUI UI;
@@ -19,7 +25,7 @@ public class ArduinoController : MonoBehaviour
     public int count;
     public int countStrideLength = 2;
 
-    private string streamMessage;
+    [SerializeField] string streamMessage;
     private int totalStrideLength;
 
     private StringBuilder _sb;
@@ -73,10 +79,10 @@ public class ArduinoController : MonoBehaviour
             int.TryParse(streamMessage.Substring(countStrideLength, countStrideLength), out count);
 
             // Only log 
-            if (force != pForce || count != pCount)
+            //if (force != pForce || count != pCount)
             {
                 Debug.Log(string.Format("Force: {0} N | Count: {1}", force, count));
-                OnReceiveOutput(force, count);
+                OnOutputReceived(force, count);
             }
 
             // Cache new values
@@ -89,10 +95,12 @@ public class ArduinoController : MonoBehaviour
         }
     }
 
-    public void OnReceiveOutput(int force, int count)
+    public void OnOutputReceived(int force, int count)
     {
-        object[] args = new object[] { force, count };
-        Output(this, args);
+        if (OutputReceived != null)
+        {
+            OutputReceived(this, new OutputReceivedEventArgs() { Force = force, Count = count });
+        }
     }
 
     public bool ForceDetected(int threshhold = 0, bool inclusive = false)

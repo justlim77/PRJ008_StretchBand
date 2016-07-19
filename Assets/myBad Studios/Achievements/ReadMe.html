@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="1347.57">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 22.0px Menlo; color: #ff8c82}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #00364a; min-height: 14.0px}
+    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 15.0px Menlo; color: #00364a}
+    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #00364a}
+    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #00364a}
+    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Menlo; color: #00364a}
+    p.p7 {margin: 0.0px 0.0px 0.0px 36.0px; text-indent: -36.0px; font: 12.0px Menlo; color: #00364a; min-height: 14.0px}
+    p.p8 {margin: 0.0px 0.0px 0.0px 36.0px; text-indent: -36.0px; font: 14.0px Menlo; color: #00364a}
+    p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #00364a; min-height: 16.0px}
+    li.li4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Menlo; color: #00364a}
+    span.s1 {text-decoration: underline}
+    span.s2 {color: #565656}
+    span.s3 {color: #4f7a28}
+    span.Apple-tab-span {white-space:pre}
+    ol.ol1 {list-style-type: decimal}
+  </style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>The Simple Achievements System v.2.0</b></span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s1"><b>About the Simple Achievements System</b></span></p>
+<p class="p2"><br></p>
+<p class="p4">What I tried to do was create a generic system that is easy to setup but that is also customizable for different uses while offering at least some form of security while still being easy to use.</p>
+<p class="p2"><br></p>
+<p class="p4">One of the nice little bonus features of the Simple Achievements System is that you need only set it up on your server once and then you can use it with all your future games also. In the main <span class="s2">SASAchieveSDK</span> script there is a field called GameID; simply change that value with each game you make and the achievements system is ready for you on the server end. 0 further configuration needed.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p5"><span class="s1"><b>This system allows you to do 3 things:</b></span></p>
+<p class="p2"><br></p>
+<ol class="ol1">
+  <li class="li4">It allows you to <span class="s3"><b>CREATE your achievements</b></span> in Unity. This means you don't have to worry about going online and entering the achievement details directly to your database. You simply drag a prefab into the scene, complete the fields and hit "Create". Done.</li>
+  <li class="li4">It allows you to <span class="s3"><b>AWARD an achievement</b></span> to a player. All you need to do is decide who gets the achievement, what achievement he /she gets and then call a single function. Done.<span class="Apple-converted-space"> </span></li>
+  <li class="li4">It allows you to <span class="s3"><b>FETCH all achievements</b></span> that a particular player has unlocked. All you have to do is decide which player's achievements you want to see and then call a single function. Done! All achievement details are then stored in an array and you can access them from there and do with the info what you want to. The function also allows you to specify only selected fields to return in case you don’t want to have all the data sent to your device all the time. Just for that bit of extra functionality… :)</li>
+</ol>
+<p class="p2"><br></p>
+<p class="p6"><span class="s1"><b>Notes on use:</b></span></p>
+<p class="p2"><br></p>
+<p class="p4">As I said before, I wanted to make the system usable to people with different needs. As such, I tried to keep in mind that some people might want to show the achievements on a website, while others might want to show it only in Unity. Inside Unity, some may want to load the achievements from the resources folder, while others might want to load it from a list in a prefab.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p4">To that end, I do not dictate what data you must retrieve from the database nor how you must save your data. I only have 2 requirements:</p>
+<p class="p4">1. The user has to have a unique identifier and you will be in charge of setting / getting the relevant id for the user</p>
+<p class="p4">2. The achievements are awarded based on the achievement's numeric id so you will need to keep track of what they are</p>
+<p class="p2"><br></p>
+<p class="p4">Originally I wanted to use a numeric id for the user id but I decided to make it a string value in case you want to use a Facebook id or a login username to identify your users by.</p>
+<p class="p2"><br></p>
+<p class="p4">In the case of websites, the web page will need to know the image file's extension whereas Unity's Resources.Load function requires the filename only so here again, it is a matter of personal preference how you decide to save it. Since the value is saved as a string, you could also save the dictionary key value in here if you so desire, or you could save the numeric array index value if you so desire. I include functions to return the achievement name, locked icon and unlocked icon as numeric index values (if possible) so you have options... I also attempt to pre-load the sprites for you also. Just make sure they are in a Resources folder and we should be good to go :)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p6"><span class="s1"><b>Setup and use:</b></span></p>
+<p class="p2"><br></p>
+<p class="p4">For the most part there is not a lot of settings and configuration and requirements and validations and all that other hassles to contend with. In fact, the system is so simple that it consists out of only 3 functions:</p>
+<ol class="ol1">
+  <li class="li4">CreateNewAchievement()</li>
+  <li class="li4">AwardAchievement()<span class="Apple-converted-space"> </span></li>
+  <li class="li4">FetchAchievements()</li>
+</ol>
+<p class="p2"><br></p>
+<p class="p4">Within each I allow for a lot of customization via default parameters. If you need it, use it. If not, don’t. Each function also allows you to specify functions to call in case something went wrong with the operation as well as simply to say “okay, I’m done”. Again, if you want to use that functionality, just complete the field. If you don’t want to do that then simply don’t. :)</p>
+<p class="p2"><br></p>
+<p class="p4">Simple, huh? :D See the included demo scenes to see how I use some while not use others. you will agree it is super simple! :D</p>
+<p class="p2"><br></p>
+<p class="p4">I include 3 prefabs to demonstrate this for you but you will not be doing it that way in your projects. The prefabs each serve only to demonstrate how to use the 3 functions above but all you need to do is call those functions and you are good. For instance:</p>
+<p class="p4"><span class="Apple-tab-span">	</span>AwardAchievement(2, “Billy”);</p>
+<p class="p4">Done! That simple!</p>
+<p class="p2"><br></p>
+<p class="p6"><span class="s1"><b>Configuration:</b></span></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1"><i>Before you start:</i></span></p>
+<p class="p2"><br></p>
+<p class="p4">You need to have / get a website that allows you to use PHP and where you have at least 1 MySQL database that you can administer. You then need to find 4 settings from your web host. This part is not something I can help you with. Read the FAQ on your web host;st website or contact them directly. what you will need is:</p>
+<p class="p2"><br></p>
+<ol class="ol1">
+  <li class="li4">The URL they need you to use to access the database. This is NOT the same as the URL to your website!!!</li>
+  <li class="li4">Your database username</li>
+  <li class="li4">Your database password</li>
+  <li class="li4">Your database name</li>
+</ol>
+<p class="p2"><br></p>
+<p class="p4">In many cases you get to choose the last 3 yourself so getting that info should be real easy. The URL is sometimes a bit tricky to get depending on your web host. Some hide it deep within the FAQ, others just display it in your account page… in any event, you need those 4 values then you are ready to configure your system..<span class="Apple-converted-space"> </span></p>
+<p class="p7"><br></p>
+<p class="p8"><b>Step 1:</b></p>
+<p class="p4">In the myBadStudios/Achievements/PHP folder there is file called config.php. You need to open this file and complete the 4 fields named loginURL, username, password and database with the details we just spoke about above.</p>
+<p class="p7"><br></p>
+<p class="p5"><b>Step 2:</b></p>
+<p class="p4">Still in config.php, enter a value for the token_key value. This value must never be shared with anybody as this is how you authenticate that the database access is being requested from your project and not some hacker or some random script created by somebody who wants to cheat in your game. This value can be absolutely anything you want it to be from as simple as "cat" up to a 128 randomly selected characters. The value is irrelevant. What is important is that this value is never shared with anybody and that you use the exact same value in <span class="s2">SASAchieveSDK in the secret_salt_value field</span>.</p>
+<p class="p2"><br></p>
+<p class="p5"><b>Step 3:</b></p>
+<p class="p4">if you don’t have a crossdomain.xml file on your web site, upload the crossdomain.xml file to the ROOT of your web space. If you have a folder called htdocs, place it there. Example, if your website is at www.somesite.com/users/billy/, crossdomain.xml should be located at www.somesite.com/crossdomain.xml.</p>
+<p class="p2"><br></p>
+<p class="p5"><b>Step 4:</b></p>
+<p class="p4">Upload the achievements.php and config.php file to any folder on your web space.</p>
+<p class="p2"><br></p>
+<p class="p5"><b>Step 5:</b></p>
+<p class="p4">Go into your web site's MySQL administration utility. I assume most people will be using phpmyadmin, but it shouldn't make a difference if you use another. Find the database you used in step 1 and find the tab that allows you to write SQL code.</p>
+<p class="p2"><br></p>
+<p class="p4">For instance, in phpmyadmin there is a tab called "SQL" that is visible after you clicked on your database. From here you can either choose to upload the TableSetup.sql file from the myBadStudios/Achievements/PHP folder or you can open the file on your local system and just copy and paste the file contents to the text area under the SQL tab. Click on "Continue" or "Go" or "Next" or whatever your administration utility offers you. This will create the tables you will need to use the Simple Achievements System.</p>
+<p class="p2"><br></p>
+<p class="p9"><b></b><br></p>
+<p class="p5"><span class="s1"><b>NOTES ON USAGE:</b></span></p>
+<p class="p2"><br></p>
+<p class="p4">* As I explained at the very top of this document, this achievements system was designed for you to setup once and then use it for all your future projects. You definitely don’t have to go through all of this each time you make a new game. All you need to do is give each game a unique GameID in <span class="s2">SASAchieveSDK</span>. That’s it.</p>
+<p class="p2"><br></p>
+<p class="p4">* This system allows you to work on a local database as well as online. If you have a local database setup, simply enter that along with your online URL and just turn <i>use_online_url</i> on or off in the inspector to use the one database or the other.</p>
+<p class="p2"><br></p>
+<p class="p4">* secret_salt_value is the corresponding key to the token_key in Step 2. Copy and paste the value from achievements.php to ensure the strings match perfectly. If they do not, then your entire system will not work. It will assume you are a hacker and report an error each time you try to access the achievements for anything.</p>
+<p class="p2"><br></p>
+<p class="p4">That's it. You are now ready to start using the Simple Achievements System.</p>
+<p class="p4">Enjoy.</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p4"><span class="s1"><i>Special mention…</i></span></p>
+<p class="p4">You will notice the database access fields appear twice in achievements.php and are marked as being online and offline. This is so you don't have to create multiple copies of the config file or have to modify the file each time you want to test offline or use online.</p>
+<p class="p2"><br></p>
+<p class="p4">Most web hosts do not allow you to access your database from your local machine and demand that the script be uploaded to your web space before you do so. This makes testing your game offline very difficult and also means that all your testing data goes to your live database. Using the included “use_online_url” variable you can create a database locally (accessible via localhost) and have your live database setup also. You simply tick the “use_online_url” field in the inspector and the Simple Achievements System will worry about what URL to get the setting file from and which set of login details to use. You tick that box and it will do the rest…</p>
+</body>
+</html>

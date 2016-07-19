@@ -23,7 +23,7 @@ public class ArduinoConnector : MonoBehaviour
     public Parity parity = Parity.None;
     /* The parity of the serial port. */
     [Tooltip("The data bits of the serial port")]
-    public int dataBits = 1;
+    public int dataBits = 8;
     /* The stop bits of the serial port. */
     [Tooltip("The stop bits of the serial port")]
     public StopBits stopBits = StopBits.One;
@@ -38,7 +38,6 @@ public class ArduinoConnector : MonoBehaviour
     private SerialPort _stream;
     private WaitForSeconds _waitForSeconds;
     private bool _running;
-    private string[] _ports;
 
     void Awake()
     {
@@ -52,6 +51,8 @@ public class ArduinoConnector : MonoBehaviour
     {
         // Opens the serial port
         _stream = new SerialPort(port, baudrate, parity, dataBits, stopBits);
+        Debug.Log(string.Format("Stream initialized with port {0}, baudrate {1}, parity {2}, {3} data bits, and stopbits set to {4}",
+            port, baudrate, parity, dataBits, stopBits));
         Debug.Log("Open connection started...");
 
         //stream.DataReceived += (x,e) =>
@@ -122,13 +123,14 @@ public class ArduinoConnector : MonoBehaviour
         Debug.Log("Close connection completed.");
     }
 
+    public string[] PortList { get; private set; }
     public void RefreshPortList()
     {
         PortList = SerialPort.GetPortNames();
     }
 
-    public string[] PortList { get; private set; }
 
+    //Not available in Mono 2.X
     private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
     {
         SerialPort sp = (SerialPort)sender;
@@ -142,7 +144,6 @@ public class ArduinoConnector : MonoBehaviour
         _stream.WriteLine(message);
         _stream.BaseStream.Flush();
     }
-
     public string ReadStringFromArduino(int timeout = 0)
     {
         _stream.ReadTimeout = timeout;
@@ -155,7 +156,6 @@ public class ArduinoConnector : MonoBehaviour
             return null;
         }
     }
-
     public int ReadByteFromArduino(int timeout = 0)
     {
         _stream.ReadTimeout = timeout;
@@ -168,8 +168,6 @@ public class ArduinoConnector : MonoBehaviour
             return 0;
         }
     }
-
-
     public IEnumerator AsynchronousReadFromArduino(Action<string> callback, Action fail = null, float timeout = float.PositiveInfinity)
     {
         DateTime initialTime = DateTime.Now;
@@ -208,7 +206,6 @@ public class ArduinoConnector : MonoBehaviour
             fail();
         yield return null;
     }
-
     public IEnumerator AsynchronousReadFromArduino(Action<int> callback, Action fail = null, float timeout = float.PositiveInfinity)
     {
         DateTime initialTime = DateTime.Now;
@@ -247,7 +244,6 @@ public class ArduinoConnector : MonoBehaviour
             fail();
         yield return null;
     }
-
 
     public static int Output;
     void ReadByte()

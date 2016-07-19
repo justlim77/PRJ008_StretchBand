@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     {
         ArduinoUI.Instance.UpdateDistance(bird.Distance, distanceToTravel);
         ArduinoUI.Instance.UpdateTimer(ElapsedTime);
+        ArduinoUI.Instance.UpdateOutput();
     }
 
     void CheckGameWin()

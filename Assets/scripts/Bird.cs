@@ -21,11 +21,15 @@ public class Bird : MonoBehaviour
     Rigidbody _rb;
     ArduinoController _controller;
 
-	// Use this for initialization
-	void Start ()
+    void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _originalPosition = transform.position;
+    }
+
+	// Use this for initialization
+	void Start ()
+    {
         _controller = ArduinoController.Instance;
 
         Reset();
