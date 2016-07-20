@@ -71,7 +71,7 @@ public class TileManager : MonoBehaviour
             GameObject tileObject = GetTile();
             Tile tile = tileObject.GetComponent<Tile>();
 
-            float length = tile.tileLength;
+            float length = tile.TileLength;
 
             Vector3 nextTilePos = _lastTilePos;
             nextTilePos.z += length;
@@ -84,13 +84,14 @@ public class TileManager : MonoBehaviour
 
             
             tileObject.transform.position = nextTilePos;
+            tile.Initialize();
             tileObject.SetActive(true);
 
             _lastTilePos = nextTilePos;
         }
     }
 
-    public void Reset()
+    public void Initialize()
     {
         foreach (var tile in tiles)
         {

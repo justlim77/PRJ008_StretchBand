@@ -89,10 +89,10 @@ public class GameManager : MonoBehaviour
             case GameState.Pregame:
                 ResetTimer();
                 ArduinoUI.Instance.UpdateMessage(pregameMessage);
-                bird.Reset();
+                bird.Initialize();
                 updateStats = false;
                 UpdateStats();
-                TileManager.Instance.Reset();
+                TileManager.Instance.Initialize();
                 break;
             case GameState.Playing:
                 StartTimer();

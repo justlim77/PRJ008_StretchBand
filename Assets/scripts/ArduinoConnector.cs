@@ -185,7 +185,6 @@ public class ArduinoConnector : MonoBehaviour
         PortList = SerialPort.GetPortNames();
     }
 
-
     //Not available in Mono 2.X
     private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
     {

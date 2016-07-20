@@ -32,10 +32,10 @@ public class Bird : MonoBehaviour
     {
         _controller = ArduinoController.Instance;
 
-        Reset();
+        Initialize();
 	}
 
-    public void Reset()
+    public void Initialize()
     {
         CancelInvoke();
         transform.position = _originalPosition;
