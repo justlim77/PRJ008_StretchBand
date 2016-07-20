@@ -7,6 +7,14 @@ using System.Collections;
 using System.IO.Ports;
 using System.Threading;
 using System.Net.Sockets;
+using System.Text;
+using System.Linq;
+
+public class OutputReceivedEventArgs : EventArgs
+{
+    public int Force;
+    public int Count;
+}
 
 public class ArduinoConnector : MonoBehaviour
 {
@@ -14,45 +22,69 @@ public class ArduinoConnector : MonoBehaviour
 
     /* The serial port where the Arduino is connected. */
     [Tooltip("The serial port where the Arduino is connected")]
-    public string port = "COM7";
+    public string Port = "COM7";
     /* The baudrate of the serial port. */
     [Tooltip("The baudrate of the serial port")]
-    public int baudrate = 9600;
+    public int Baudrate = 9600;
     /* The parity of the serial port. */
     [Tooltip("The parity of the serial port")]
-    public Parity parity = Parity.None;
+    public Parity Parity = Parity.None;
     /* The parity of the serial port. */
     [Tooltip("The data bits of the serial port")]
-    public int dataBits = 8;
+    public int DataBits = 8;
     /* The stop bits of the serial port. */
     [Tooltip("The stop bits of the serial port")]
-    public StopBits stopBits = StopBits.One;
+    public StopBits StopBits = StopBits.One;
     /* The read timeout of the serial port. */
     [Tooltip("The read timeout of the serial port")]
-    public int readTimeout = 5000;
+    public int ReadTimeout = 5000;
     /* The wait  interval between serial reads (Default is 0.05f) */
     [Tooltip("The wait interval between serial reads (Default is 0.05f)")]
-    public float waitBetweenReads = 0.05f;
+    public float WaitBetweenReads = 0.05f;
+    /* Force connection to specified serial port */
+    [Tooltip("Force connection to specified serial port")]
+    public bool ForceConnection = false;
 
-    private Thread _thread;
-    private SerialPort _stream;
-    private WaitForSeconds _waitForSeconds;
-    private bool _running;
+    public int StrideLength = 4;
+
+    private BandReadJob _BandReadJob;
+
+    private Thread _Thread;
+    private SerialPort _Stream;
+    private WaitForSeconds _WaitForSeconds;
+    private bool _IsRunning;
+    private int[] _OutputArray, _CachedArray;
+    private int _StrideCount = 0;
+
+    public delegate void OutputReceivedEventHandler(object sender, OutputReceivedEventArgs e);
+    public static event OutputReceivedEventHandler OutputReceived;
 
     void Awake()
     {
         if (Instance == null)
             Instance = this;
 
-        _waitForSeconds = new WaitForSeconds(waitBetweenReads);
+        _WaitForSeconds = new WaitForSeconds(WaitBetweenReads);
+    }
+
+    void Start()
+    {
+        _OutputArray = new int[strideLength];
+        _CachedArray = new int[strideLength];
+
+        if (ForceConnection)
+        {
+            string _port = Port;
+            Open();
+        }
     }
 
     public void Open()
     {
         // Opens the serial port
-        _stream = new SerialPort(port, baudrate, parity, dataBits, stopBits);
+        _Stream = new SerialPort(Port, Baudrate, Parity, DataBits, StopBits);
         Debug.Log(string.Format("Stream initialized with port {0}, baudrate {1}, parity {2}, {3} data bits, and stopbits set to {4}",
-            port, baudrate, parity, dataBits, stopBits));
+            Port, Baudrate, Parity, DataBits, StopBits));
         Debug.Log("Open connection started...");
 
         //stream.DataReceived += (x,e) =>
@@ -71,10 +103,10 @@ public class ArduinoConnector : MonoBehaviour
 
         try
         {
-            if (_stream != null)
+            if (_Stream != null)
             {
-                _stream.Open();
-                _stream.ReadTimeout = readTimeout;
+                _Stream.Open();
+                _Stream.ReadTimeout = ReadTimeout;
                 Debug.Log("Port opened!");
                 //this.stream.DataReceived += DataReceivedHandler;
                 //this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
@@ -82,7 +114,7 @@ public class ArduinoConnector : MonoBehaviour
             }
             else
             {
-                if (_stream.IsOpen)
+                if (_Stream.IsOpen)
                 {
                     print("Port is already open.");
                 }
@@ -99,26 +131,50 @@ public class ArduinoConnector : MonoBehaviour
             Debug.LogWarning("Could not open serial port: " + e.Message);
         }
 
-        _running = true;
-        ThreadStart ts = new ThreadStart(ReadByte);
-        _thread = new Thread(ts);
-        _thread.Start();
+        //_running = true;
+        //ThreadStart ts = new ThreadStart(ReadByte);
+        //_thread = new Thread(ts);
+        //_thread.Start();
+
+        _BandReadJob = new BandReadJob(ref _OutputArray, ref _CachedArray, StrideLength, _Stream);
+        _BandReadJob.Start();
+    }
+
+    void Update()
+    {
+        if (_BandReadJob != null)
+        {
+            if (_BandReadJob.Update())
+            {
+                _BandReadJob = null;
+                _BandReadJob = new BandReadJob(ref _OutputArray, ref _CachedArray, StrideLength, _Stream);
+                _BandReadJob.Start();
+            }
+        }
+
+        if (BandReadJob.BandUpdate)
+        {
+            BandReadJob.BandUpdate = false;
+            OnOutputReceived(_OutputArray);
+        }
     }
 
     public void Close()
     {
         Debug.Log("Close connection started...");
 
-        if (_stream != null)
+        if (_Stream != null)
         {
-            _stream.Close();
+            _Stream.Close();
             Debug.Log("Stream closed.");
         }
 
-        _running = false;    // stop listening thread
+        _IsRunning = false;    // stop listening thread
 
-        if(_thread != null)
-            _thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
+        if(_Thread != null)
+            _Thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
+
+        _BandReadJob.Abort();
 
         Debug.Log("Close connection completed.");
     }
@@ -141,15 +197,15 @@ public class ArduinoConnector : MonoBehaviour
     public void WriteToArduino(string message)
     {
         // Send the request
-        _stream.WriteLine(message);
-        _stream.BaseStream.Flush();
+        _Stream.WriteLine(message);
+        _Stream.BaseStream.Flush();
     }
     public string ReadStringFromArduino(int timeout = 0)
     {
-        _stream.ReadTimeout = timeout;
+        _Stream.ReadTimeout = timeout;
         try
         {
-            return _stream.ReadLine();
+            return _Stream.ReadLine();
         }
         catch (TimeoutException)
         {
@@ -158,10 +214,10 @@ public class ArduinoConnector : MonoBehaviour
     }
     public int ReadByteFromArduino(int timeout = 0)
     {
-        _stream.ReadTimeout = timeout;
+        _Stream.ReadTimeout = timeout;
         try
         {
-            return Convert.ToInt32(_stream.ReadByte());
+            return Convert.ToInt32(_Stream.ReadByte());
         }
         catch (TimeoutException)
         {
@@ -181,7 +237,7 @@ public class ArduinoConnector : MonoBehaviour
             // A single read attempt
             try
             {
-                dataString = _stream.ReadLine();
+                dataString = _Stream.ReadLine();
                 //dataString = stream.ReadExisting();
             }
             catch (TimeoutException)
@@ -195,7 +251,7 @@ public class ArduinoConnector : MonoBehaviour
                 yield return null;
             }
             else
-                yield return _waitForSeconds;
+                yield return _WaitForSeconds;
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
@@ -219,8 +275,8 @@ public class ArduinoConnector : MonoBehaviour
             // A single read attempt
             try
             {
-                dataString = _stream.ReadByte();
-                _stream.BaseStream.Flush();
+                dataString = _Stream.ReadByte();
+                _Stream.BaseStream.Flush();
             }
             catch (TimeoutException)
             {
@@ -233,7 +289,7 @@ public class ArduinoConnector : MonoBehaviour
                 yield return null;
             }
             else
-                yield return _waitForSeconds;
+                yield return _WaitForSeconds;
 
             nowTime = DateTime.Now;
             diff = nowTime - initialTime;
@@ -246,15 +302,35 @@ public class ArduinoConnector : MonoBehaviour
     }
 
     public static int Output;
+    int strideCount = 0;
+    public int strideLength = 4;
+    StringBuilder _sb = new StringBuilder(4, 8);
+    public static bool FlagUpdate = false;
+    int[] outputArray = new int[4];
+    int[] cachedArray = new int[] { 0, 0, 0, 0 };
     void ReadByte()
     {
         print("Thread running");
         try
         {
-            while (_running)
+            while (_IsRunning)
             {
-                Output = _stream.ReadByte();
-                ArduinoController.Instance.ProcessStream(Convert.ToChar(Output).ToString());
+                outputArray[strideCount] = _Stream.ReadByte();
+                strideCount++;
+                if (strideCount >= strideLength)
+                {                    
+                    print(string.Format("Output: {0} {1} {2} {3} | Cached: {4} {5} {6} {7}", outputArray[0], outputArray[1], outputArray[2], outputArray[3],
+                        cachedArray[0], cachedArray[1], cachedArray[2], cachedArray[3]));
+                    // Compare cached array to new array
+                    if (!outputArray.SequenceEqual(cachedArray))
+                    {
+                        OnOutputReceived(outputArray);
+                        FlagUpdate = true;
+                    }
+
+                    strideCount = 0;
+                }
+                //ArduinoController.Instance.ProcessStream(Convert.ToChar(Output).ToString());
             }
         }
         catch (ThreadAbortException e)
@@ -263,9 +339,28 @@ public class ArduinoConnector : MonoBehaviour
         }
     }
 
+    string outputString = "";
+    int force, count;
+    public void OnOutputReceived(int[] output)
+    {
+        if (OutputReceived != null)
+        {
+            for (int i = 0; i < output.Length; ++i)
+                _sb.Append(Convert.ToChar(output[i]));
+            outputString = _sb.ToString();
+            int.TryParse(outputString.Substring(0, 2), out force);
+            int.TryParse(outputString.Substring(2, 2), out count);
+
+            OutputReceived(this, new OutputReceivedEventArgs() { Force = force, Count = count });
+
+            //outputArray.CopyTo(cachedArray, 0);
+            _sb.Clear();
+        }
+    }
+
     public void SetPort(string portName)
     {
-        port = portName.ToUpper();
+        Port = portName.ToUpper();
     }
 
     void OnDestroy()

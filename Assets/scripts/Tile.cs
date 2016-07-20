@@ -13,6 +13,12 @@ public class Tile : MonoBehaviour
         col.isTrigger = true;
 	}
 
+    void OnTriggerEnter()
+    {
+        Signpost post = Signpost.Instance;
+        post.UpdateSign()
+    }
+
     void OnTriggerExit()
     {
         TileManager manager = TileManager.Instance;

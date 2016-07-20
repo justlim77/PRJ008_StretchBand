@@ -23,8 +23,6 @@ public class GameManager : MonoBehaviour
 
     public float ElapsedTime { get; private set; }
 
-    DateTime elapsed;
-
     void Awake()
     {
         if (Instance == null)

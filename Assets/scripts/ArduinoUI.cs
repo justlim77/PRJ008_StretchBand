@@ -51,12 +51,12 @@ public class ArduinoUI : MonoBehaviour
 
     void OnEnable()
     {
-        ArduinoController.OutputReceived += OnOutputReceived;
+        ArduinoConnector.OutputReceived += OnOutputReceived;
     }
 
     void OnDisable()
     {
-        ArduinoController.OutputReceived -= OnOutputReceived;
+        ArduinoConnector.OutputReceived -= OnOutputReceived;
     }
 
     private void OnOutputReceived(object sender, OutputReceivedEventArgs e)
@@ -71,6 +71,8 @@ public class ArduinoUI : MonoBehaviour
         {
             connectionCanvas.SetActive(!connectionCanvas.activeSelf);
         }
+
+        UpdateOutput();
     }
 
     void OnDropdownValueChanged()
@@ -94,7 +96,7 @@ public class ArduinoUI : MonoBehaviour
 
     public void UpdateOutput()
     {
-        outputLabel.text = string.Format("Force: {0} N / Count: {1}", force, count);
+        outputLabel.text = string.Format("{0} N | {1}", force, count);
     }
 
     public void UpdateTimer(float time)

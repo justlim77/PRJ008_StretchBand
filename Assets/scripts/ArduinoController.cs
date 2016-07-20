@@ -3,18 +3,9 @@ using System.Collections;
 using System;
 using System.Text;
 
-public class OutputReceivedEventArgs : EventArgs
-{
-    public int Force;
-    public int Count;
-}
-
 public class ArduinoController : MonoBehaviour
 {
     public static ArduinoController Instance { get; private set; }
-
-    public delegate void OutputReceivedEventHandler(object sender, OutputReceivedEventArgs e);
-    public static event OutputReceivedEventHandler OutputReceived;
 
     public ArduinoConnector connector;
     public ArduinoUI UI;
@@ -29,6 +20,22 @@ public class ArduinoController : MonoBehaviour
     private int totalStrideLength;
 
     private StringBuilder _sb;
+
+    void OnEnable()
+    {
+        ArduinoConnector.OutputReceived += OnOutputReceived;
+    }
+
+    void OnDisable()
+    {
+        ArduinoConnector.OutputReceived -= OnOutputReceived;
+    }
+
+    private void OnOutputReceived(object sender, OutputReceivedEventArgs e)
+    {
+        force = e.Force;
+        count = e.Count;
+    }
 
     void Awake()
     {
@@ -82,7 +89,7 @@ public class ArduinoController : MonoBehaviour
             //if (force != pForce || count != pCount)
             {
                 Debug.Log(string.Format("Force: {0} N | Count: {1}", force, count));
-                OnOutputReceived(force, count);
+                //OnOutputReceived(force, count);
             }
 
             // Cache new values
@@ -92,14 +99,6 @@ public class ArduinoController : MonoBehaviour
             // Clear for next buffer
             strideCount = 0;
             _sb.Clear();
-        }
-    }
-
-    public void OnOutputReceived(int force, int count)
-    {
-        if (OutputReceived != null)
-        {
-            OutputReceived(this, new OutputReceivedEventArgs() { Force = force, Count = count });
         }
     }
 
