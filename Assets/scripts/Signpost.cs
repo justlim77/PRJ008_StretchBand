@@ -8,6 +8,6 @@ public class Signpost : MonoBehaviour
 
     public void UpdateSign(float distance)
     {
-        Label.text = string.Format("{0} m", distance);
+        Label.text = string.Format("{0}  m", distance);
     }
 }

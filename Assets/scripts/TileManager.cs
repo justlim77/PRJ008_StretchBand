@@ -35,8 +35,6 @@ public class TileManager : MonoBehaviour
             tile.SetActive(false);
             tiles.Add(tile);
         }
-
-        Spawn(tilesToSpawn);
 	}
 
     GameObject GetTile()
@@ -48,7 +46,7 @@ public class TileManager : MonoBehaviour
             if (tile.activeSelf == false)
             {
                 retVal = tile;
-                continue;
+                return retVal;
             }
         }
 

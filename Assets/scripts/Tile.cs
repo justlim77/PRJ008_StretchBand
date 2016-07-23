@@ -4,14 +4,14 @@ using System.Collections;
 public class Tile : MonoBehaviour
 {
     public float TileLength;
-    public Signpost MidPost, EndPost;
+    public Signpost[] Signposts;
+    public float DistanceInterval = 50.0f;
 
-    Collider _Collider;
+    [SerializeField] Collider _Collider;
 
 	// Use this for initialization
 	void Start ()
     {
-        _Collider = GetComponent<Collider>();
         _Collider.isTrigger = true;
 	}
 
@@ -25,8 +25,11 @@ public class Tile : MonoBehaviour
     public bool Initialize()
     {
         Vector3 tilePosition = transform.position;
-        MidPost.UpdateSign(transform.position.z + (TileLength * 0.5f));
-        EndPost.UpdateSign(transform.position.z + TileLength);
+        foreach (var signpost in Signposts)
+        {
+            tilePosition.z += DistanceInterval;
+            signpost.UpdateSign(tilePosition.z);
+        }
 
         return true;
     }
