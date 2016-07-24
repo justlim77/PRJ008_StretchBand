@@ -18,8 +18,8 @@ public class Tile : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         TileManager manager = TileManager.Instance;
-        manager.Spawn();
         gameObject.SetActive(false);
+        manager.Spawn();
     }
 
     public bool Initialize()

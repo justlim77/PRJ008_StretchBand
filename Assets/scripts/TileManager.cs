@@ -5,18 +5,28 @@ using System.Collections.Generic;
 public class TileManager : MonoBehaviour
 {
     public static TileManager Instance { get; private set; }
-    public Vector3 startPosition;
-    public GameObject tilePrefab;
-    public List<GameObject> tiles = new List<GameObject>();
-    public int tilesToCache = 5;
-    public int tilesToSpawn = 3;
 
-    Vector3 _lastTilePos;
+    public GameObject TilePrefab;
+    public Vector3 StartPosition;
+    public bool Cache = true;
+    public int CacheAmount = 1;
+    public int InitialSpawnAmount = 2;
+
+    List<GameObject> _Tiles = new List<GameObject>();
+    Vector3 _LastTilePosition;
 
     void Awake()
     {
         if (Instance == null)
             Instance = this;
+
+        if (Cache)
+        {
+            for (int i = 0; i < CacheAmount; i++)
+            {
+                AddNewTile();
+            }
+        }
     }
 
     void OnDestroy()
@@ -27,21 +37,14 @@ public class TileManager : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        _lastTilePos = startPosition;
-
-        for (int i = 0; i < tilesToCache; i++)
-        {
-            GameObject tile = (GameObject)Instantiate(tilePrefab);
-            tile.SetActive(false);
-            tiles.Add(tile);
-        }
+        _LastTilePosition = StartPosition;
 	}
 
     GameObject GetTile()
     {
         GameObject retVal = null;
 
-        foreach (GameObject tile in tiles)
+        foreach (GameObject tile in _Tiles)
         {
             if (tile.activeSelf == false)
             {
@@ -52,10 +55,7 @@ public class TileManager : MonoBehaviour
 
         if (retVal == null)
         {
-            GameObject tile = (GameObject)Instantiate(tilePrefab);
-            tiles.Add(tile);
-            tile.SetActive(false);
-            retVal = tile;
+            retVal = AddNewTile();
         }
 
         return retVal;
@@ -71,7 +71,7 @@ public class TileManager : MonoBehaviour
 
             float length = tile.TileLength;
 
-            Vector3 nextTilePos = _lastTilePos;
+            Vector3 nextTilePos = _LastTilePosition;
             nextTilePos.z += length;
 
             if (firstTile)
@@ -85,19 +85,28 @@ public class TileManager : MonoBehaviour
             tile.Initialize();
             tileObject.SetActive(true);
 
-            _lastTilePos = nextTilePos;
+            _LastTilePosition = nextTilePos;
         }
+    }
+
+    GameObject AddNewTile()
+    {
+        GameObject tile = Instantiate(TilePrefab);
+        tile.SetActive(false);
+        tile.transform.SetParent(this.transform);
+        _Tiles.Add(tile);
+        return tile;
     }
 
     public void Initialize()
     {
-        foreach (var tile in tiles)
+        foreach (var tile in _Tiles)
         {
             tile.SetActive(false);
             tile.transform.position = Vector3.zero;
         }
-        _lastTilePos = startPosition;
+        _LastTilePosition = StartPosition;
         firstTile = true;
-        Spawn(tilesToSpawn);
+        Spawn(InitialSpawnAmount);
     }
 }
