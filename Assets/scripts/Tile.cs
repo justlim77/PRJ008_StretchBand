@@ -7,19 +7,20 @@ public class Tile : MonoBehaviour
     public Signpost[] Signposts;
     public float DistanceInterval = 50.0f;
 
-    [SerializeField] Collider _Collider;
-
-	// Use this for initialization
 	void Start ()
     {
-        _Collider.isTrigger = true;
 	}
 
     void OnTriggerExit(Collider other)
     {
         TileManager manager = TileManager.Instance;
-        gameObject.SetActive(false);
+        Invoke("Deactivate", 3);
         manager.Spawn();
+    }
+
+    void Deactivate()
+    {
+        gameObject.SetActive(false);
     }
 
     public bool Initialize()
@@ -32,5 +33,15 @@ public class Tile : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void SetPosition(Vector3 position)
+    {
+        this.transform.position = position;
+    }
+
+    public void SetActive(bool value)
+    {
+        gameObject.SetActive(value);
     }
 }

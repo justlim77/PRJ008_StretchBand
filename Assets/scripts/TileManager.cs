@@ -34,12 +34,6 @@ public class TileManager : MonoBehaviour
         Instance = null;
     }
 
-	// Use this for initialization
-	void Start ()
-    {
-        _LastTilePosition = StartPosition;
-	}
-
     GameObject GetTile()
     {
         GameObject retVal = null;
@@ -80,10 +74,9 @@ public class TileManager : MonoBehaviour
                 nextTilePos.z -= length;
             }
 
-            
-            tileObject.transform.position = nextTilePos;
+            tile.SetPosition(nextTilePos);
             tile.Initialize();
-            tileObject.SetActive(true);
+            tile.SetActive(true);
 
             _LastTilePosition = nextTilePos;
         }

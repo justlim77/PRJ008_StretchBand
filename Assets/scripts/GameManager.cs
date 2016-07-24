@@ -38,10 +38,10 @@ public class GameManager : MonoBehaviour
     bool timerStart = false;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SetState(GameState.Playing);
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    SetState(GameState.Playing);
+        //}
 
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
                 ArduinoUI.Instance.UpdateMessage(endgameMessage);
                 StopTimer();
                 updateStats = false;
+                bird.Land();
                 break;
         }
     }

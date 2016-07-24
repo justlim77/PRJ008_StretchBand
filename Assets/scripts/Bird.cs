@@ -1,36 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum AnimationState
+{
+    Idle,
+    Landing,
+    Takeoff,
+    Fly,
+    Glide,
+    Walking,
+    Eat,
+    Jump,
+    Hunting,
+    Die
+}
+
 public class Bird : MonoBehaviour
 {
-    public Vector3 movementForce;
-    public float boostTime = 5.0f;
-    public float boostMultiplier = 2.0f;
-    public Vector3 force;
-    public int forceThreshold = 10;
-    public KeyCode boostKey = KeyCode.Space;
-    public ParticleSystem boostParticles;
+    [Header("Movement")]
+    public Vector3 Center;
+    public Vector3 MovementForce;
+    public Vector3 Force;
+
+    public float TakeoffSpeed = 3.0f;
+    public float LandingSpeed = 3.0f;
+    public float LandingForwardBuffer = 5.0f;
+
+    [Header("Boost")]
+    public int ForceThreshold = 10;
+    public float BoostTime = 5.0f;
+    public float BoostMultiplier = 2.0f;
+    public KeyCode BoostKey = KeyCode.Space;
+    public ParticleSystem BoostParticles;
+
+    [SerializeField] Animator _Animator;
 
     public float Distance
     {
-        get; private set;
+        get
+        {
+            return transform.position.z;
+        }
     }
 
-    Vector3 _force;
-    Vector3 _originalPosition;
-    Rigidbody _rb;
-    ArduinoController _controller;
+    float _GroundHeight = 0.5f;
+    Vector3 _Force;
+    Vector3 _OriginalPosition;
+    Rigidbody _Rigidbody;
+    ArduinoController _ArduinoController;
 
     void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
-        _originalPosition = transform.position;
+        _Animator = GetComponentInChildren<Animator>();
+        _Rigidbody = GetComponent<Rigidbody>();
+        _OriginalPosition = transform.position;
     }
 
 	// Use this for initialization
 	void Start ()
     {
-        _controller = ArduinoController.Instance;
+        _ArduinoController = ArduinoController.Instance;
 
         Initialize();
 	}
@@ -38,39 +67,48 @@ public class Bird : MonoBehaviour
     public void Initialize()
     {
         CancelInvoke();
-        transform.position = _originalPosition;
-        Distance = 0;
+        transform.position = _OriginalPosition;
         SetInMotion(false);
-        boostParticles.Stop();
+        BoostParticles.Stop();
     }
 
     public void SetInMotion(bool value)
     {
-        _force = value ? movementForce * 1 : Vector3.zero;
+        _Force = value ? MovementForce * 1 : Vector3.zero;
     }
 
     // Update is called once per frame
     bool forceApplied = false;
+    bool takeoff = false;
     void Update()
     {
         GameManager manager = GameManager.Instance;
 
         // Check for initial stretch to start
-        if (manager.gameState.Equals(GameState.Pregame) && _controller.ForceDetected())
+        if (manager.gameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
         {
             manager.SetState(GameState.Playing);
             Boost();
         }
 
-        CheckForce();
-        UpdateDistance();
-
         // Spacebar start
-        if (Input.GetKeyDown(boostKey) && forceApplied == false)
+        if (Input.GetKeyDown(BoostKey) && forceApplied == false)
         {
             forceApplied = true;
-            Boost();
+
+            if (takeoff == false)
+            {
+                takeoff = true;
+                StartCoroutine(TakeOff());
+            }
+            else
+            {
+                Boost();        
+            }
         }
+        
+        CheckForce();
+        UpdateDistance();
     }
 
 	void FixedUpdate ()
@@ -80,17 +118,18 @@ public class Bird : MonoBehaviour
 
     void UpdateDistance()
     {
-        Distance = transform.position.z;
+        //Distance = transform.position.z;
     }
 
     void Move()
     {
-        _rb.MovePosition(_rb.position + _force * Time.deltaTime);
+        if(GameManager.Instance.gameState == GameState.Playing)
+            _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
     }
 
     void CheckForce()
     {
-        if (_controller.ForceDetected(forceThreshold))
+        if (_ArduinoController.ForceDetected(ForceThreshold))
         {
             Boost();
         }
@@ -102,18 +141,54 @@ public class Bird : MonoBehaviour
             return;
 
         forceApplied = true;
-        boostParticles.Play();
-        _force *= boostMultiplier;
+        BoostParticles.Play();
+        _Force *= BoostMultiplier;
         ArduinoUI.Instance.UpdateMessage("BOOSTING!");
 
-        Invoke("CancelBoost", boostTime);
+        Invoke("CancelBoost", BoostTime);
     }
 
     void CancelBoost()
     {
         forceApplied = false;
-        boostParticles.Stop();
-        _force = movementForce;
+        BoostParticles.Stop();
+        _Force = MovementForce;
         ArduinoUI.Instance.UpdateMessage("");
+    }
+
+    IEnumerator TakeOff()
+    {
+        SetAnimation(AnimationState.Takeoff);   // Set animation to takeoff state
+        do
+        {
+            transform.position = Vector3.MoveTowards(this.transform.position, Center, TakeoffSpeed * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        } while (Vector3.Distance(transform.position, Center) != 0f);
+
+        GameManager.Instance.SetState(GameState.Playing);   // Set 
+        forceApplied = false;   // Enable boosting
+    }
+
+    IEnumerator Landing()
+    {
+        Vector3 targetPos = new Vector3(0, _GroundHeight, transform.position.z + LandingForwardBuffer);
+        do
+        {
+            transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
+            yield return new WaitForFixedUpdate();
+        } while (Vector3.Distance(transform.position, targetPos) != 0f);
+        SetAnimation(AnimationState.Landing);
+        takeoff = false;
+    }
+
+    public void Land()
+    {
+        StartCoroutine(Landing());
+    }
+
+    void SetAnimation(AnimationState state)
+    {
+        string trigger = state.ToString().ToLower();
+        _Animator.SetTrigger(trigger);
     }
 }

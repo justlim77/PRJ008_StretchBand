@@ -1,0 +1,905 @@
+fileFormatVersion: 2
+guid: 3e31f6f41d8ef27489e57bf4593f633b
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: bee-eater_Beak1_bone
+    100004: bee-eater_Beak2-nub_bone
+    100006: bee-eater_Beak2_bone
+    100008: bee-eater_Beak_ctrl
+    100010: Bee-eater_Body_mesh
+    100012: bee-eater_COM_ctrl
+    100014: bee-eater_Head_bone
+    100016: bee-eater_Head_ctrl
+    100018: bee-eater_Hip_ctrl
+    100020: bee-eater_Jaw1_bone
+    100022: bee-eater_Jaw1_ctrl
+    100024: bee-eater_Jaw2-nub_bone
+    100026: bee-eater_Jaw2_bone
+    100028: bee-eater_Jaw_ctrl
+    100030: bee-eater_l_Carpals-nub_bone
+    100032: bee-eater_l_Carpals_bone
+    100034: bee-eater_l_Carpals_ctrl
+    100036: bee-eater_l_Clav_bone
+    100038: bee-eater_l_Clavicle_ctrl
+    100040: bee-eater_l_Digit1-nub_bone
+    100042: bee-eater_l_Digit1_bone
+    100044: bee-eater_l_Digit1_ctrl
+    100046: bee-eater_l_Digit2_1_bone
+    100048: bee-eater_l_Digit2_2-nub_bone
+    100050: bee-eater_l_Digit2_2_bone
+    100052: bee-eater_l_Digit2_ctrl
+    100054: bee-eater_l_Digit3_1_bone
+    100056: bee-eater_l_Digit3_2_bone
+    100058: bee-eater_l_Digit3_3-nub_bone
+    100060: bee-eater_l_Digit3_3_bone
+    100062: bee-eater_l_Digit3_ctrl
+    100064: bee-eater_l_Digit4_1_bone
+    100066: bee-eater_l_Digit4_2_bone
+    100068: bee-eater_l_Digit4_3_bone
+    100070: bee-eater_l_Digit4_4-nub_bone
+    100072: bee-eater_l_Digit4_4_bone
+    100074: bee-eater_l_Digit4_ctrl
+    100076: bee-eater_l_Eye_ctrl
+    100078: Bee-eater_l_Eye_mesh
+    100080: bee-eater_l_Feather1-nub_bone
+    100082: bee-eater_l_Feather1_bone
+    100084: bee-eater_l_Feather2-nub_bone
+    100086: bee-eater_l_Feather2_bone
+    100088: bee-eater_l_Feather3-nub_bone
+    100090: bee-eater_l_Feather3_bone
+    100092: bee-eater_l_Femur_bone
+    100094: bee-eater_l_Foot-nub_bone
+    100096: bee-eater_l_Foot_bone
+    100098: bee-eater_l_Foot_ctrl
+    100100: bee-eater_l_Foot_IKGoal
+    100102: bee-eater_l_Humerus_bone
+    100104: bee-eater_l_Humerus_ctrl
+    100106: bee-eater_l_Knee_bone
+    100108: bee-eater_l_Leg_hlp
+    100110: bee-eater_l_Leg_hlp 1
+    100112: bee-eater_l_Leg_IKGoal
+    100114: bee-eater_l_Metacarpals_bone
+    100116: bee-eater_l_Metacarpals_ctrl
+    100118: bee-eater_l_Thigh_bone
+    100120: bee-eater_l_Thigh_hlp
+    100122: bee-eater_l_Thigh_hlp 1
+    100124: bee-eater_l_Thigh_IKGoal
+    100126: bee-eater_l_Ulna_bone
+    100128: bee-eater_l_Ulna_ctrl
+    100130: bee-eater_Main_ctrl
+    100132: bee-eater_Neck_bone
+    100134: bee-eater_NeckBase_ctrl
+    100136: bee-eater_Pelvis_bone
+    100138: bee-eater_r_Carpals-nub_bone
+    100140: bee-eater_r_Carpals_bone
+    100142: bee-eater_r_Carpals_ctrl
+    100144: bee-eater_r_Clav_bone
+    100146: bee-eater_r_Clavicle_ctrl
+    100148: bee-eater_r_Digit1-nub_bone
+    100150: bee-eater_r_Digit1_bone
+    100152: bee-eater_r_Digit1_ctrl
+    100154: bee-eater_r_Digit2_1_bone
+    100156: bee-eater_r_Digit2_2-nub_bone
+    100158: bee-eater_r_Digit2_2_bone
+    100160: bee-eater_r_Digit2_ctrl
+    100162: bee-eater_r_Digit3_1_bone
+    100164: bee-eater_r_Digit3_2_bone
+    100166: bee-eater_r_Digit3_3-nub_bone
+    100168: bee-eater_r_Digit3_3_bone
+    100170: bee-eater_r_Digit3_ctrl
+    100172: bee-eater_r_Digit4_1_bone
+    100174: bee-eater_r_Digit4_2_bone
+    100176: bee-eater_r_Digit4_3_bone
+    100178: bee-eater_r_Digit4_4-nub_bone
+    100180: bee-eater_r_Digit4_4_bone
+    100182: bee-eater_r_Digit4_ctrl
+    100184: bee-eater_r_Eye_ctrl
+    100186: Bee-eater_r_Eye_mesh
+    100188: bee-eater_r_Feather1-nub_bone
+    100190: bee-eater_r_Feather1_bone
+    100192: bee-eater_r_Feather2-nub_bone
+    100194: bee-eater_r_Feather2_bone
+    100196: bee-eater_r_Feather3-nub_bone
+    100198: bee-eater_r_Feather3_bone
+    100200: bee-eater_r_Femur_bone
+    100202: bee-eater_r_Foot-nub_bone
+    100204: bee-eater_r_Foot_bone
+    100206: bee-eater_r_Foot_ctrl
+    100208: bee-eater_r_Foot_IKGoal
+    100210: bee-eater_r_Humerus_bone
+    100212: bee-eater_r_Humerus_ctrl
+    100214: bee-eater_r_Knee_bone
+    100216: bee-eater_r_Leg_IKGoal
+    100218: bee-eater_r_Metacarpals_bone
+    100220: bee-eater_r_Metacarpals_ctrl
+    100222: bee-eater_r_Thigh_bone
+    100224: bee-eater_r_Thigh_IKGoal
+    100226: bee-eater_r_Ulna_bone
+    100228: bee-eater_r_Ulna_ctrl
+    100230: bee-eater_Spine1_bone
+    100232: bee-eater_Spine2_bone
+    100234: bee-eater_Spine3_bone
+    100236: bee-eater_SpineBase_ctrl
+    100238: bee-eater_Tail1_bone
+    100240: bee-eater_Tail2_bone
+    100242: bee-eater_Tail3-nub_bone
+    100244: bee-eater_Tail3_bone
+    100246: bee-eater_TailBase_ctrl
+    100248: bee-eater_TailEnd_ctrl
+    400000: //RootNode
+    400002: bee-eater_Beak1_bone
+    400004: bee-eater_Beak2-nub_bone
+    400006: bee-eater_Beak2_bone
+    400008: bee-eater_Beak_ctrl
+    400010: Bee-eater_Body_mesh
+    400012: bee-eater_COM_ctrl
+    400014: bee-eater_Head_bone
+    400016: bee-eater_Head_ctrl
+    400018: bee-eater_Hip_ctrl
+    400020: bee-eater_Jaw1_bone
+    400022: bee-eater_Jaw1_ctrl
+    400024: bee-eater_Jaw2-nub_bone
+    400026: bee-eater_Jaw2_bone
+    400028: bee-eater_Jaw_ctrl
+    400030: bee-eater_l_Carpals-nub_bone
+    400032: bee-eater_l_Carpals_bone
+    400034: bee-eater_l_Carpals_ctrl
+    400036: bee-eater_l_Clav_bone
+    400038: bee-eater_l_Clavicle_ctrl
+    400040: bee-eater_l_Digit1-nub_bone
+    400042: bee-eater_l_Digit1_bone
+    400044: bee-eater_l_Digit1_ctrl
+    400046: bee-eater_l_Digit2_1_bone
+    400048: bee-eater_l_Digit2_2-nub_bone
+    400050: bee-eater_l_Digit2_2_bone
+    400052: bee-eater_l_Digit2_ctrl
+    400054: bee-eater_l_Digit3_1_bone
+    400056: bee-eater_l_Digit3_2_bone
+    400058: bee-eater_l_Digit3_3-nub_bone
+    400060: bee-eater_l_Digit3_3_bone
+    400062: bee-eater_l_Digit3_ctrl
+    400064: bee-eater_l_Digit4_1_bone
+    400066: bee-eater_l_Digit4_2_bone
+    400068: bee-eater_l_Digit4_3_bone
+    400070: bee-eater_l_Digit4_4-nub_bone
+    400072: bee-eater_l_Digit4_4_bone
+    400074: bee-eater_l_Digit4_ctrl
+    400076: bee-eater_l_Eye_ctrl
+    400078: Bee-eater_l_Eye_mesh
+    400080: bee-eater_l_Feather1-nub_bone
+    400082: bee-eater_l_Feather1_bone
+    400084: bee-eater_l_Feather2-nub_bone
+    400086: bee-eater_l_Feather2_bone
+    400088: bee-eater_l_Feather3-nub_bone
+    400090: bee-eater_l_Feather3_bone
+    400092: bee-eater_l_Femur_bone
+    400094: bee-eater_l_Foot-nub_bone
+    400096: bee-eater_l_Foot_bone
+    400098: bee-eater_l_Foot_ctrl
+    400100: bee-eater_l_Foot_IKGoal
+    400102: bee-eater_l_Humerus_bone
+    400104: bee-eater_l_Humerus_ctrl
+    400106: bee-eater_l_Knee_bone
+    400108: bee-eater_l_Leg_hlp
+    400110: bee-eater_l_Leg_hlp 1
+    400112: bee-eater_l_Leg_IKGoal
+    400114: bee-eater_l_Metacarpals_bone
+    400116: bee-eater_l_Metacarpals_ctrl
+    400118: bee-eater_l_Thigh_bone
+    400120: bee-eater_l_Thigh_hlp
+    400122: bee-eater_l_Thigh_hlp 1
+    400124: bee-eater_l_Thigh_IKGoal
+    400126: bee-eater_l_Ulna_bone
+    400128: bee-eater_l_Ulna_ctrl
+    400130: bee-eater_Main_ctrl
+    400132: bee-eater_Neck_bone
+    400134: bee-eater_NeckBase_ctrl
+    400136: bee-eater_Pelvis_bone
+    400138: bee-eater_r_Carpals-nub_bone
+    400140: bee-eater_r_Carpals_bone
+    400142: bee-eater_r_Carpals_ctrl
+    400144: bee-eater_r_Clav_bone
+    400146: bee-eater_r_Clavicle_ctrl
+    400148: bee-eater_r_Digit1-nub_bone
+    400150: bee-eater_r_Digit1_bone
+    400152: bee-eater_r_Digit1_ctrl
+    400154: bee-eater_r_Digit2_1_bone
+    400156: bee-eater_r_Digit2_2-nub_bone
+    400158: bee-eater_r_Digit2_2_bone
+    400160: bee-eater_r_Digit2_ctrl
+    400162: bee-eater_r_Digit3_1_bone
+    400164: bee-eater_r_Digit3_2_bone
+    400166: bee-eater_r_Digit3_3-nub_bone
+    400168: bee-eater_r_Digit3_3_bone
+    400170: bee-eater_r_Digit3_ctrl
+    400172: bee-eater_r_Digit4_1_bone
+    400174: bee-eater_r_Digit4_2_bone
+    400176: bee-eater_r_Digit4_3_bone
+    400178: bee-eater_r_Digit4_4-nub_bone
+    400180: bee-eater_r_Digit4_4_bone
+    400182: bee-eater_r_Digit4_ctrl
+    400184: bee-eater_r_Eye_ctrl
+    400186: Bee-eater_r_Eye_mesh
+    400188: bee-eater_r_Feather1-nub_bone
+    400190: bee-eater_r_Feather1_bone
+    400192: bee-eater_r_Feather2-nub_bone
+    400194: bee-eater_r_Feather2_bone
+    400196: bee-eater_r_Feather3-nub_bone
+    400198: bee-eater_r_Feather3_bone
+    400200: bee-eater_r_Femur_bone
+    400202: bee-eater_r_Foot-nub_bone
+    400204: bee-eater_r_Foot_bone
+    400206: bee-eater_r_Foot_ctrl
+    400208: bee-eater_r_Foot_IKGoal
+    400210: bee-eater_r_Humerus_bone
+    400212: bee-eater_r_Humerus_ctrl
+    400214: bee-eater_r_Knee_bone
+    400216: bee-eater_r_Leg_IKGoal
+    400218: bee-eater_r_Metacarpals_bone
+    400220: bee-eater_r_Metacarpals_ctrl
+    400222: bee-eater_r_Thigh_bone
+    400224: bee-eater_r_Thigh_IKGoal
+    400226: bee-eater_r_Ulna_bone
+    400228: bee-eater_r_Ulna_ctrl
+    400230: bee-eater_Spine1_bone
+    400232: bee-eater_Spine2_bone
+    400234: bee-eater_Spine3_bone
+    400236: bee-eater_SpineBase_ctrl
+    400238: bee-eater_Tail1_bone
+    400240: bee-eater_Tail2_bone
+    400242: bee-eater_Tail3-nub_bone
+    400244: bee-eater_Tail3_bone
+    400246: bee-eater_TailBase_ctrl
+    400248: bee-eater_TailEnd_ctrl
+    2300000: bee-eater_l_Digit1_ctrl
+    2300002: bee-eater_l_Digit2_ctrl
+    2300004: bee-eater_l_Digit3_ctrl
+    2300006: bee-eater_l_Digit4_ctrl
+    2300008: Bee-eater_l_Eye_mesh
+    2300010: bee-eater_l_Foot_ctrl
+    2300012: bee-eater_r_Digit1_ctrl
+    2300014: bee-eater_r_Digit2_ctrl
+    2300016: bee-eater_r_Digit3_ctrl
+    2300018: bee-eater_r_Digit4_ctrl
+    2300020: Bee-eater_r_Eye_mesh
+    2300022: bee-eater_r_Foot_ctrl
+    2300024: bee-eater_TailEnd_ctrl
+    3300000: bee-eater_l_Digit1_ctrl
+    3300002: bee-eater_l_Digit2_ctrl
+    3300004: bee-eater_l_Digit3_ctrl
+    3300006: bee-eater_l_Digit4_ctrl
+    3300008: Bee-eater_l_Eye_mesh
+    3300010: bee-eater_l_Foot_ctrl
+    3300012: bee-eater_r_Digit1_ctrl
+    3300014: bee-eater_r_Digit2_ctrl
+    3300016: bee-eater_r_Digit3_ctrl
+    3300018: bee-eater_r_Digit4_ctrl
+    3300020: Bee-eater_r_Eye_mesh
+    3300022: bee-eater_r_Foot_ctrl
+    3300024: bee-eater_TailEnd_ctrl
+    4300000: Bee-eater_Body_mesh
+    4300002: bee-eater_TailEnd_ctrl
+    4300004: bee-eater_r_Digit2_ctrl
+    4300006: bee-eater_r_Digit3_ctrl
+    4300008: bee-eater_r_Digit4_ctrl
+    4300010: bee-eater_r_Digit1_ctrl
+    4300012: bee-eater_l_Digit2_ctrl
+    4300014: bee-eater_l_Digit3_ctrl
+    4300016: bee-eater_l_Digit4_ctrl
+    4300018: bee-eater_l_Digit1_ctrl
+    4300020: Bee-eater_r_Eye_mesh
+    4300022: Bee-eater_l_Eye_mesh
+    4300024: bee-eater_l_Foot_ctrl
+    4300026: bee-eater_r_Foot_ctrl
+    7400000: bee-eater_takeoff
+    7400002: bee-eater_fly
+    7400004: bee-eater_landing
+    7400006: bee-eater_walking
+    7400008: bee-eater_jump
+    7400010: bee-eater_eat
+    7400012: bee-eater_idle
+    7400014: bee-eater_glide
+    7400016: bee-eater_hunting
+    7400018: bee-eater_die
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: Bee-eater_Body_mesh
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: bee-eater_takeoff
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_fly
+      takeName: Take 001
+      firstFrame: 15
+      lastFrame: 25
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Bee-eater_Body_mesh
+        weight: 1
+      - path: bee-eater_Head_ctrl
+        weight: 1
+      - path: bee-eater_Hip_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit1_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit1_ctrl/bee-eater_l_Digit1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit1_ctrl/bee-eater_l_Digit1_bone/bee-eater_l_Digit1-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit2_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit2_ctrl/bee-eater_l_Digit2_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit2_ctrl/bee-eater_l_Digit2_1_bone/bee-eater_l_Digit2_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit2_ctrl/bee-eater_l_Digit2_1_bone/bee-eater_l_Digit2_2_bone/bee-eater_l_Digit2_2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit3_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit3_ctrl/bee-eater_l_Digit3_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit3_ctrl/bee-eater_l_Digit3_1_bone/bee-eater_l_Digit3_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit3_ctrl/bee-eater_l_Digit3_1_bone/bee-eater_l_Digit3_2_bone/bee-eater_l_Digit3_3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit3_ctrl/bee-eater_l_Digit3_1_bone/bee-eater_l_Digit3_2_bone/bee-eater_l_Digit3_3_bone/bee-eater_l_Digit3_3-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl/bee-eater_l_Digit4_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl/bee-eater_l_Digit4_1_bone/bee-eater_l_Digit4_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl/bee-eater_l_Digit4_1_bone/bee-eater_l_Digit4_2_bone/bee-eater_l_Digit4_3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl/bee-eater_l_Digit4_1_bone/bee-eater_l_Digit4_2_bone/bee-eater_l_Digit4_3_bone/bee-eater_l_Digit4_4_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Digit4_ctrl/bee-eater_l_Digit4_1_bone/bee-eater_l_Digit4_2_bone/bee-eater_l_Digit4_3_bone/bee-eater_l_Digit4_4_bone/bee-eater_l_Digit4_4-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_l_Femur_bone/bee-eater_l_Thigh_bone/bee-eater_l_Knee_bone/bee-eater_l_Foot_bone/bee-eater_l_Foot-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit1_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit1_ctrl/bee-eater_r_Digit1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit1_ctrl/bee-eater_r_Digit1_bone/bee-eater_r_Digit1-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit2_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit2_ctrl/bee-eater_r_Digit2_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit2_ctrl/bee-eater_r_Digit2_1_bone/bee-eater_r_Digit2_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit2_ctrl/bee-eater_r_Digit2_1_bone/bee-eater_r_Digit2_2_bone/bee-eater_r_Digit2_2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit3_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit3_ctrl/bee-eater_r_Digit3_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit3_ctrl/bee-eater_r_Digit3_1_bone/bee-eater_r_Digit3_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit3_ctrl/bee-eater_r_Digit3_1_bone/bee-eater_r_Digit3_2_bone/bee-eater_r_Digit3_3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit3_ctrl/bee-eater_r_Digit3_1_bone/bee-eater_r_Digit3_2_bone/bee-eater_r_Digit3_3_bone/bee-eater_r_Digit3_3-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl/bee-eater_r_Digit4_1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl/bee-eater_r_Digit4_1_bone/bee-eater_r_Digit4_2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl/bee-eater_r_Digit4_1_bone/bee-eater_r_Digit4_2_bone/bee-eater_r_Digit4_3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl/bee-eater_r_Digit4_1_bone/bee-eater_r_Digit4_2_bone/bee-eater_r_Digit4_3_bone/bee-eater_r_Digit4_4_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Digit4_ctrl/bee-eater_r_Digit4_1_bone/bee-eater_r_Digit4_2_bone/bee-eater_r_Digit4_3_bone/bee-eater_r_Digit4_4_bone/bee-eater_r_Digit4_4-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_r_Femur_bone/bee-eater_r_Thigh_bone/bee-eater_r_Knee_bone/bee-eater_r_Foot_bone/bee-eater_r_Foot-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather1_bone/bee-eater_l_Feather1-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather2_bone/bee-eater_l_Feather2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_l_Feather3_bone/bee-eater_l_Feather3-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather1_bone/bee-eater_r_Feather1-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather2_bone/bee-eater_r_Feather2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_r_Feather3_bone/bee-eater_r_Feather3-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Pelvis_bone/bee-eater_Tail1_bone/bee-eater_Tail2_bone/bee-eater_Tail3_bone/bee-eater_Tail3-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_bone/bee-eater_l_Ulna_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_bone/bee-eater_l_Ulna_bone/bee-eater_l_Metacarpals_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_bone/bee-eater_l_Ulna_bone/bee-eater_l_Metacarpals_bone/bee-eater_l_Carpals_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_bone/bee-eater_l_Ulna_bone/bee-eater_l_Metacarpals_bone/bee-eater_l_Carpals_bone/bee-eater_l_Carpals-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_ctrl/bee-eater_l_Ulna_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_ctrl/bee-eater_l_Ulna_ctrl/bee-eater_l_Metacarpals_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clav_bone/bee-eater_l_Humerus_ctrl/bee-eater_l_Ulna_ctrl/bee-eater_l_Metacarpals_ctrl/bee-eater_l_Carpals_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_l_Clavicle_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Beak1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Beak1_bone/bee-eater_Beak2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Beak1_bone/bee-eater_Beak2_bone/bee-eater_Beak2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Beak_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Jaw1_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Jaw1_bone/bee-eater_Jaw2_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Jaw1_bone/bee-eater_Jaw2_bone/bee-eater_Jaw2-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Jaw1_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_Jaw1_ctrl/bee-eater_Jaw_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_l_Eye_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/Bee-eater_l_Eye_mesh
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/bee-eater_r_Eye_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_Neck_bone/bee-eater_Head_bone/Bee-eater_r_Eye_mesh
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_bone/bee-eater_r_Ulna_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_bone/bee-eater_r_Ulna_bone/bee-eater_r_Metacarpals_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_bone/bee-eater_r_Ulna_bone/bee-eater_r_Metacarpals_bone/bee-eater_r_Carpals_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_bone/bee-eater_r_Ulna_bone/bee-eater_r_Metacarpals_bone/bee-eater_r_Carpals_bone/bee-eater_r_Carpals-nub_bone
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_ctrl/bee-eater_r_Ulna_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_ctrl/bee-eater_r_Ulna_ctrl/bee-eater_r_Metacarpals_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clav_bone/bee-eater_r_Humerus_ctrl/bee-eater_r_Ulna_ctrl/bee-eater_r_Metacarpals_ctrl/bee-eater_r_Carpals_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_COM_ctrl/bee-eater_Spine1_bone/bee-eater_Spine2_bone/bee-eater_Spine3_bone/bee-eater_r_Clavicle_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl/bee-eater_l_Leg_hlp
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl/bee-eater_l_Leg_hlp/bee-eater_l_Leg_IKGoal
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl/bee-eater_l_Leg_hlp/bee-eater_l_Thigh_hlp
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl/bee-eater_l_Leg_hlp/bee-eater_l_Thigh_hlp/bee-eater_l_Foot_IKGoal
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_l_Foot_ctrl/bee-eater_l_Leg_hlp/bee-eater_l_Thigh_hlp/bee-eater_l_Thigh_IKGoal
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl/bee-eater_l_Leg_hlp 1
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl/bee-eater_l_Leg_hlp 1/bee-eater_l_Thigh_hlp
+          1
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl/bee-eater_l_Leg_hlp 1/bee-eater_l_Thigh_hlp
+          1/bee-eater_r_Foot_IKGoal
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl/bee-eater_l_Leg_hlp 1/bee-eater_l_Thigh_hlp
+          1/bee-eater_r_Thigh_IKGoal
+        weight: 1
+      - path: bee-eater_Main_ctrl/bee-eater_r_Foot_ctrl/bee-eater_l_Leg_hlp 1/bee-eater_r_Leg_IKGoal
+        weight: 1
+      - path: bee-eater_NeckBase_ctrl
+        weight: 1
+      - path: bee-eater_SpineBase_ctrl
+        weight: 1
+      - path: bee-eater_TailBase_ctrl
+        weight: 1
+      - path: bee-eater_TailEnd_ctrl
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_landing
+      takeName: Take 001
+      firstFrame: 25
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_walking
+      takeName: Take 001
+      firstFrame: 43
+      lastFrame: 55
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_jump
+      takeName: Take 001
+      firstFrame: 58
+      lastFrame: 68
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_eat
+      takeName: Take 001
+      firstFrame: 70
+      lastFrame: 115
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_idle
+      takeName: Take 001
+      firstFrame: 117
+      lastFrame: 233
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_glide
+      takeName: Take 001
+      firstFrame: 236
+      lastFrame: 260
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_hunting
+      takeName: Take 001
+      firstFrame: 262
+      lastFrame: 294
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: bee-eater_die
+      takeName: Take 001
+      firstFrame: 297
+      lastFrame: 316
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
