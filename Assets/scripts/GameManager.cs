@@ -12,14 +12,19 @@ public enum GameState
 
 public class GameManager : MonoBehaviour
 {
-    public string pregameMessage;
-    public string endgameMessage;
-
-    public Bird bird;
-    public float distanceToTravel = 100;
-
     public static GameManager Instance { get; private set; }
-    public GameState gameState;
+
+    [Header("Game Info")]
+    public GameState GameState;
+    public string PreGameMessage;
+    public string EndGameMessage;
+
+    [Header("Bird")]
+    public Bird Bird;
+    public float DistanceToTravel = 100;
+    public BirdHouse BirdHouse;
+    public float LandingBuffer = 5.0f;
+
 
     public float ElapsedTime { get; private set; }
 
@@ -64,14 +69,14 @@ public class GameManager : MonoBehaviour
 
     void UpdateStats()
     {
-        ArduinoUI.Instance.UpdateDistance(bird.Distance, distanceToTravel);
+        ArduinoUI.Instance.UpdateDistance(Bird.Distance, DistanceToTravel);
         ArduinoUI.Instance.UpdateTimer(ElapsedTime);
         ArduinoUI.Instance.UpdateOutput();
     }
 
     void CheckGameWin()
     {
-        if (bird.Distance >= distanceToTravel)
+        if (Bird.Distance >= DistanceToTravel)
         {
             SetState(GameState.End);
         }
@@ -79,32 +84,33 @@ public class GameManager : MonoBehaviour
 
     public void SetState(GameState state)
     {
-        if (gameState == state)
+        if (GameState == state)
             return;
 
-        gameState = state;
+        GameState = state;
 
         switch (state)
         {
             case GameState.Pregame:
                 ResetTimer();
-                ArduinoUI.Instance.UpdateMessage(pregameMessage);
-                bird.Initialize();
+                ArduinoUI.Instance.UpdateMessage(PreGameMessage);
+                Bird.Initialize();
                 updateStats = false;
                 UpdateStats();
                 TileManager.Instance.Initialize();
+                BirdHouse.Distance = DistanceToTravel + LandingBuffer;
                 break;
             case GameState.Playing:
                 StartTimer();
                 ArduinoUI.Instance.UpdateMessage("");
-                bird.SetInMotion(true);
+                Bird.SetInMotion(true);
                 updateStats = true;
                 break;
             case GameState.End:
-                ArduinoUI.Instance.UpdateMessage(endgameMessage);
+                ArduinoUI.Instance.UpdateMessage(EndGameMessage);
                 StopTimer();
                 updateStats = false;
-                bird.Land();
+                Bird.Land();
                 break;
         }
     }

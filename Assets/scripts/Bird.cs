@@ -85,7 +85,7 @@ public class Bird : MonoBehaviour
         GameManager manager = GameManager.Instance;
 
         // Check for initial stretch to start
-        if (manager.gameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
+        if (manager.GameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
         {
             manager.SetState(GameState.Playing);
             Boost();
@@ -123,7 +123,7 @@ public class Bird : MonoBehaviour
 
     void Move()
     {
-        if(GameManager.Instance.gameState == GameState.Playing)
+        if(GameManager.Instance.GameState == GameState.Playing)
             _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
     }
 
@@ -171,7 +171,7 @@ public class Bird : MonoBehaviour
 
     IEnumerator Landing()
     {
-        Vector3 targetPos = new Vector3(0, _GroundHeight, transform.position.z + LandingForwardBuffer);
+        Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
         do
         {
             transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
