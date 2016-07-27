@@ -3,6 +3,7 @@
 
 
 using UnityEngine;
+using UnityEngine.UI;
 
 using System;
 using System.Collections;
@@ -116,10 +117,10 @@ public class KinectManager : MonoBehaviour
 	public List<MonoBehaviour> gestureListeners = new List<MonoBehaviour>();
 
 	[Tooltip("GUI-Text to display user detection messages.")]
-	public GUIText calibrationText;
+	public Text calibrationText;
 	
 	[Tooltip("GUI-Text to display debug messages for the currently tracked gestures.")]
-	public GUIText gesturesDebugText;
+	public Text gesturesDebugText;
 
 	
 	// Bool to keep track of whether Kinect has been initialized

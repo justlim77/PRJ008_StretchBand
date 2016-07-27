@@ -7,7 +7,7 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 	[Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
 	public int playerIndex = 0;
 
-	[Tooltip("GUI-Text to display the interaction information.")]
+	[Tooltip("Text to display the interaction information.")]
 	public Text interactionInfo;
 
 	private bool intInfoDisplayed;
@@ -20,7 +20,10 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 			return;
 
 		string sGestureText = string.Format ("{0} Grip detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
-		interactionInfo.text = sGestureText;
+
+        InteractionManager manager = InteractionManager.Instance;
+        manager.CalibrationText.text = sGestureText;
+        //interactionInfo.text = sGestureText;
 		//Debug.Log (sGestureText);
 
 		intInfoDisplayed = true;
@@ -33,7 +36,10 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 			return;
 
 		string sGestureText = string.Format ("{0} Release detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
-		interactionInfo.text = sGestureText;
+
+        InteractionManager manager = InteractionManager.Instance;
+        manager.CalibrationText.text = sGestureText;
+        //interactionInfo.text = sGestureText;
 		//Debug.Log (sGestureText);
 
 		intInfoDisplayed = true;
@@ -46,7 +52,10 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 			return false;
 
 		string sGestureText = string.Format ("{0} Click detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
-		interactionInfo.text = sGestureText;
+
+        InteractionManager manager = InteractionManager.Instance;
+        manager.CalibrationText.text = sGestureText;
+        //interactionInfo.text = sGestureText;
 		Debug.Log (sGestureText);
 
 		intInfoDisplayed = true;
@@ -65,8 +74,11 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 
 			if(interactionInfo != null)
 			{
-				interactionInfo.text = string.Empty;
+                interactionInfo.text = string.Empty;
 			}
-		}
+
+            InteractionManager manager = InteractionManager.Instance;
+            manager.CalibrationText.text = string.Empty;
+        }
 	}
 }

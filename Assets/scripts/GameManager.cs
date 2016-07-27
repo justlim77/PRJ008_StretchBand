@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
                 Bird.Initialize();
                 updateStats = false;
                 UpdateStats();
-                TileManager.Instance.Initialize();
+                //TileManager.Instance.Initialize();
                 BirdHouse.Distance = DistanceToTravel + LandingBuffer;
                 break;
             case GameState.Playing:

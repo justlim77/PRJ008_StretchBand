@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 
 /// <summary>
 /// Filter to correct the joint orientations to constraint to the range of viable human motion.
@@ -16,7 +16,7 @@ public class BoneOrientationsConstraint
 	// list of joint constraints
     private readonly List<BoneOrientationConstraint> jointConstraints = new List<BoneOrientationConstraint>();
 
-	private GUIText debugText;
+	private Text debugText;
 
 	private long frameNum = 0;
 	//private float currentTime = 0f;
@@ -27,11 +27,16 @@ public class BoneOrientationsConstraint
     {
     }
 
-	public void SetDebugText(GUIText debugText)
-	{
-		this.debugText = debugText;
-	}
-	
+	//public void SetDebugText(GUIText debugText)
+	//{
+	//	this.debugText = debugText;
+	//}
+
+    public void SetDebugText(Text debugText)
+    {
+        this.debugText = debugText;
+    }
+
     // AddDefaultConstraints - Adds a set of default joint constraints for normal human poses.  
     // This is a reasonable set of constraints for plausible human bio-mechanics.
     public void AddDefaultConstraints()

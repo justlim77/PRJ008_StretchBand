@@ -21,10 +21,17 @@ public class Bird : MonoBehaviour
     public Vector3 Center;
     public Vector3 MovementForce;
     public Vector3 Force;
+    public Vector3 GuidedForce;
 
     public float TakeoffSpeed = 3.0f;
     public float LandingSpeed = 3.0f;
     public float LandingForwardBuffer = 5.0f;
+
+    [Header("Flight Bounds")]
+    public float HorizontalMin;
+    public float HorizontalMax;
+    public float VerticalMin;
+    public float VerticalMax;
 
     [Header("Boost")]
     public int ForceThreshold = 10;
@@ -123,8 +130,25 @@ public class Bird : MonoBehaviour
 
     void Move()
     {
-        if(GameManager.Instance.GameState == GameState.Playing)
+        if (GameManager.Instance.GameState == GameState.Playing)
+        {
+            InteractionManager interactionManager = InteractionManager.Instance;
+            if (interactionManager != null)
+            {
+                Vector2 flightScreenPosition = Vector2.Lerp(interactionManager.GetLeftHandScreenPos(), interactionManager.GetRightHandScreenPos(), 0.5f);
+                //Debug.Log(flightScreenPosition);
+
+                float x = MathF.ConvertRange(0, 1, HorizontalMin, HorizontalMax, flightScreenPosition.x);
+                float y = MathF.ConvertRange(0, 1, VerticalMin, VerticalMax, flightScreenPosition.y);
+
+                GuidedForce = new Vector3(x, y, 0);
+            }
+
             _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
+            GuidedForce.z = _Rigidbody.position.z;
+            Vector3 targetPos = Vector3.Lerp(transform.position, GuidedForce, 3 * Time.deltaTime);
+            transform.position = targetPos;
+        }
     }
 
     void CheckForce()

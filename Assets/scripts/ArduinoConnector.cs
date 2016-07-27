@@ -63,6 +63,8 @@ public class ArduinoConnector : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
+        else if (Instance != null && Instance != this)
+            Destroy(this.gameObject);
 
         _WaitForSeconds = new WaitForSeconds(WaitBetweenReads);
     }

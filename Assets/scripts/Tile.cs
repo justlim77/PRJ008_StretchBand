@@ -11,12 +11,12 @@ public class Tile : MonoBehaviour
     {
 	}
 
-    void OnTriggerExit(Collider other)
-    {
-        TileManager manager = TileManager.Instance;
-        Invoke("Deactivate", 3);
-        manager.Spawn();
-    }
+    //void OnTriggerExit(Collider other)
+    //{
+    //    TileManager manager = TileManager.Instance;
+    //    Invoke("Deactivate", 3);
+    //    manager.Spawn();
+    //}
 
     void Deactivate()
     {
