@@ -24,15 +24,24 @@ public class Collectable : MonoBehaviour, IInteractable
             Destroy(gameObject, destroyTime);
         }
     }
-	
-	// Update is called once per frame
+
+    bool _Registered = false;
 	void Update ()
     {
         if (_Target != null)
         {
+            transform.localScale = Vector3.MoveTowards(transform.localScale, Vector3.zero, shrinkSpeed * Time.deltaTime);
             transform.position = Vector3.MoveTowards(transform.position, _Target.position, magnetSpeed * Time.deltaTime);
 
-            transform.localScale = Vector3.MoveTowards(transform.localScale, Vector3.zero, shrinkSpeed * Time.deltaTime);
+            if (!_Registered)
+            {
+                float dist = Vector3.Distance(transform.position, _Target.position);
+                if (dist < 0.1f)
+                {
+                    _Registered = true;
+                    GameManager.Instance.AddBerry();
+                }
+            }
         }
 	}
 }

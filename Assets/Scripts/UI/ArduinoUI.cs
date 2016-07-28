@@ -15,6 +15,7 @@ public class ArduinoUI : MonoBehaviour
     public Text distanceLabel;
     public Text timerLabel;
     public Text messageLabel;
+    public Image messageBackground;
 
     [Header("Sliders")]
     public Slider distanceSlider;
@@ -101,24 +102,33 @@ public class ArduinoUI : MonoBehaviour
 
     public void UpdateTimer(float time)
     {
-        float min;
-        float sec;
+        //float min;
+        //float sec;
 
-        min = (int)(time / 60);
-        sec = time % 60;
-        if (sec == 60)
-        {
-            sec = 0;
-            min++;
-        }
+        //min = (int)(time / 60);
+        //sec = time % 60;
+        //if (sec == 60)
+        //{
+        //    sec = 0;
+        //    min++;
+        //}
 
-        string secString = sec < 10 ? "0" + sec.ToString("F0") : sec.ToString("F0");
-        timerLabel.text = string.Format("{0} m {1} s", min, secString);
+        //string secString = sec < 10 ? "0" + sec.ToString("F0") : sec.ToString("F0");
+        //timerLabel.text = string.Format("{0} m {1} s", min, secString);
+
+        timerLabel.text = string.Format("{0:F0}", time);
     }
 
     public void UpdateMessage(string msg)
     {
         messageLabel.text = msg;
+        messageBackground.enabled = true;
+    }
+
+    public void ClearMessage()
+    {
+        messageLabel.text = string.Empty;
+        messageBackground.enabled = false;
     }
 
     void UpdatePortDropdown()

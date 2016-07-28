@@ -13,18 +13,22 @@ public enum GameState
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public static int BerriesRequiredToBoost = 10;
 
     [Header("Game Info")]
     public GameState GameState;
+    public float GameDuration = 60.0f;
+    public float DistanceToTravel = 100.0f;
     public string PreGameMessage;
     public string EndGameMessage;
 
     [Header("Bird")]
     public Bird Bird;
-    public float DistanceToTravel = 100;
     public BirdHouse BirdHouse;
-    public float LandingBuffer = 5.0f;
+    public float BoostWindow = 5.0f;
 
+    int _BoostBerries;
+    int _TotalBerries;
 
     public float ElapsedTime { get; private set; }
 
@@ -55,7 +59,8 @@ public class GameManager : MonoBehaviour
 
         if (timerStart)
         {
-            ElapsedTime = Time.time - startTime;
+            //ElapsedTime = Time.time - startTime;
+            ElapsedTime -= Time.deltaTime;
         }
 
         if (updateStats)
@@ -98,7 +103,7 @@ public class GameManager : MonoBehaviour
                 updateStats = false;
                 UpdateStats();
                 //TileManager.Instance.Initialize();
-                BirdHouse.Distance = DistanceToTravel + LandingBuffer;
+                BirdHouse.Distance = DistanceToTravel + Bird.LandingForwardBuffer;
                 break;
             case GameState.Playing:
                 StartTimer();
@@ -125,11 +130,44 @@ public class GameManager : MonoBehaviour
     void ResetTimer()
     {
         timerStart = false;
-        ElapsedTime = 0;
+        //ElapsedTime = 0;
+        ElapsedTime = GameDuration;
     }
 
     void StopTimer()
     {
         timerStart = false;
+    }
+
+    bool _IsBoosting = false;
+    public void AddBerry()
+    {
+        _BoostBerries++;
+        _TotalBerries++;
+
+        if (_BoostBerries >= BerriesRequiredToBoost)
+        {
+            if (!_IsBoosting)
+            {
+                _IsBoosting = true;
+                StartCoroutine(EnableBoostWindow());
+            }
+        }
+    }
+
+    public void ResetBerries()
+    {
+        _BoostBerries = 0;
+    }
+
+    IEnumerator EnableBoostWindow()
+    {
+        Bird.CanBoost = true;
+        ArduinoUI.Instance.UpdateMessage("ENERGY UP!\nPULL BAND TO BOOST");
+        yield return new WaitForSeconds(BoostWindow);
+        ArduinoUI.Instance.ClearMessage();
+        Bird.CanBoost = false;
+
+        _IsBoosting = false;
     }
 }

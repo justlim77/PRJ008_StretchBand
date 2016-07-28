@@ -26,6 +26,7 @@ public class Bird : MonoBehaviour
     public float TakeoffSpeed = 3.0f;
     public float LandingSpeed = 3.0f;
     public float LandingForwardBuffer = 5.0f;
+    [SerializeField] float _GroundHeight = 0.5f;
 
     [Header("Flight Bounds")]
     public float HorizontalMin;
@@ -40,6 +41,7 @@ public class Bird : MonoBehaviour
     public KeyCode BoostKey = KeyCode.Space;
     public ParticleSystem BoostParticles;
     public float BoostRadius = 5.0f;
+    public bool CanBoost { get; set; }
 
     [Header("Magnet")]
     [SerializeField] Transform _MagnetPoint;
@@ -70,7 +72,6 @@ public class Bird : MonoBehaviour
         set { _Collider.radius = value; }
     }
 
-    float _GroundHeight = 0.5f;
     Animator _Animator;
     Vector3 _Force;
     Vector3 _OriginalPosition;
@@ -101,6 +102,7 @@ public class Bird : MonoBehaviour
         transform.position = _OriginalPosition;
         SetInMotion(false);
         BoostParticles.Stop();
+        CanBoost = false;
     }
 
     public void SetInMotion(bool value)
@@ -129,7 +131,6 @@ public class Bird : MonoBehaviour
 
             if (takeoff == false)
             {
-                takeoff = true;
                 StartCoroutine(TakeOff());
             }
             else
@@ -177,9 +178,17 @@ public class Bird : MonoBehaviour
 
     void CheckForce()
     {
-        if (_ArduinoController.ForceDetected(ForceThreshold))
+        if (CanBoost)
         {
-            Boost();
+            if (_ArduinoController.ForceDetected(ForceThreshold))
+            {
+                Boost();
+            }
+
+            if (Input.GetKeyDown(BoostKey) && forceApplied == false)
+            {
+                Boost();
+            }
         }
     }    
 
@@ -200,15 +209,18 @@ public class Bird : MonoBehaviour
     {
         forceApplied = false;
 
-        SetAnimation(AnimationState.Fly);   // Change to fly animation
-        Radius = _OriginalRadius;           // Revert collection radius
-        BoostParticles.Stop();              // Stop boost particles
-        _Force = MovementForce;             // Revert forward force
+        SetAnimation(AnimationState.Fly);       // Change to fly animation
+        Radius = _OriginalRadius;               // Revert collection radius
+        BoostParticles.Stop();                  // Stop boost particles
+        GameManager.Instance.ResetBerries();    // Reset boost berry bar
+        _Force = MovementForce;                 // Revert forward force
         ArduinoUI.Instance.UpdateMessage("");   // Update message
     }
 
     IEnumerator TakeOff()
     {
+        takeoff = true;
+
         SetAnimation(AnimationState.Takeoff);   // Set animation to takeoff state
         do
         {
@@ -222,6 +234,8 @@ public class Bird : MonoBehaviour
 
     IEnumerator Landing()
     {
+        CanBoost = false;
+
         Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
         do
         {
@@ -229,6 +243,7 @@ public class Bird : MonoBehaviour
             yield return new WaitForFixedUpdate();
         } while (Vector3.Distance(transform.position, targetPos) != 0f);
         SetAnimation(AnimationState.Landing);
+
         takeoff = false;
     }
 
