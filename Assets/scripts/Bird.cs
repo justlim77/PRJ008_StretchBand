@@ -99,10 +99,11 @@ public class Bird : MonoBehaviour
     public void Initialize()
     {
         CancelInvoke();
-        transform.position = _OriginalPosition;
-        SetInMotion(false);
+        SetAnimation(AnimationState.Idle);
         BoostParticles.Stop();
         CanBoost = false;
+        SetInMotion(false);
+        transform.position = _OriginalPosition;
     }
 
     public void SetInMotion(bool value)
@@ -115,31 +116,37 @@ public class Bird : MonoBehaviour
     bool takeoff = false;
     void Update()
     {
-        GameManager manager = GameManager.Instance;
+        //GameManager manager = GameManager.Instance;
 
-        // Check for initial stretch to start
-        if (manager.GameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
-        {
-            manager.SetState(GameState.Playing);
-            Boost();
-        }
+        //// Check for initial stretch to start
+        //if (manager.GameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
+        //{
+        //    manager.SetState(GameState.Playing);
+        //    Boost();
+        //}
 
         // Spacebar start
-        if (Input.GetKeyDown(BoostKey) && forceApplied == false)
+        if (CheckForce())
         {
-            forceApplied = true;
-
             if (takeoff == false)
             {
                 StartCoroutine(TakeOff());
             }
-            else
+
+            if (CanBoost)
             {
-                Boost();        
+                Boost();
             }
         }
-        
-        CheckForce();
+
+        //if (CanBoost)
+        //{
+        //    if (CheckForce())
+        //    {
+        //        Boost();
+        //    }
+        //}
+
         UpdateDistance();
     }
 
@@ -176,20 +183,9 @@ public class Bird : MonoBehaviour
         }
     }
 
-    void CheckForce()
+    bool CheckForce()
     {
-        if (CanBoost)
-        {
-            if (_ArduinoController.ForceDetected(ForceThreshold))
-            {
-                Boost();
-            }
-
-            if (Input.GetKeyDown(BoostKey) && forceApplied == false)
-            {
-                Boost();
-            }
-        }
+        return ((Input.GetKeyDown(BoostKey) || _ArduinoController.ForceDetected(ForceThreshold)) && forceApplied == false);
     }    
 
     void Boost()

@@ -114,9 +114,17 @@ public class ArduinoUI : MonoBehaviour
         //}
 
         //string secString = sec < 10 ? "0" + sec.ToString("F0") : sec.ToString("F0");
-        //timerLabel.text = string.Format("{0} m {1} s", min, secString);
+        //timerLabel.text = string.Format("{0} m {1} s", min, secString);        
 
-        timerLabel.text = string.Format("{0:F0}", time);
+        if (time <= 0.0f)
+        {
+            time = 0.0f;
+            timerLabel.text = "Time's Up";
+        }
+        else
+        {
+            timerLabel.text = string.Format("{0:F0}", time);
+        }
     }
 
     public void UpdateMessage(string msg)

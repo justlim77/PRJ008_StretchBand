@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
         {
             //ElapsedTime = Time.time - startTime;
             ElapsedTime -= Time.deltaTime;
+            ElapsedTime = Mathf.Clamp(ElapsedTime, 0.0f, GameDuration);
         }
 
         if (updateStats)
@@ -167,6 +168,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(BoostWindow);
         ArduinoUI.Instance.ClearMessage();
         Bird.CanBoost = false;
+
+        ResetBerries();
 
         _IsBoosting = false;
     }
