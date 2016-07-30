@@ -210,7 +210,7 @@ public class Bird : MonoBehaviour
         BoostParticles.Stop();                  // Stop boost particles
         GameManager.Instance.ResetBerries();    // Reset boost berry bar
         _Force = MovementForce;                 // Revert forward force
-        ArduinoUI.Instance.UpdateMessage("");   // Update message
+        ArduinoUI.Instance.ClearMessage();      // Clear message
     }
 
     IEnumerator TakeOff()

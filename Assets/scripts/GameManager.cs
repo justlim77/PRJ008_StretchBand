@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.Playing:
                 StartTimer();
-                ArduinoUI.Instance.UpdateMessage("");
+                ArduinoUI.Instance.ClearMessage();
                 Bird.SetInMotion(true);
                 updateStats = true;
                 break;

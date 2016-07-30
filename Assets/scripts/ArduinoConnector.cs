@@ -9,6 +9,9 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Text;
 using System.Linq;
+using ArduinoLibrary;
+using UnityEngine.UI;
+using System.IO;
 
 public class OutputReceivedEventArgs : EventArgs
 {
@@ -47,6 +50,8 @@ public class ArduinoConnector : MonoBehaviour
 
     public int StrideLength = 4;
 
+    public Text status;
+
     private BandReadJob _BandReadJob;
 
     private Thread _Thread;
@@ -74,11 +79,26 @@ public class ArduinoConnector : MonoBehaviour
         _OutputArray = new int[strideLength];
         _CachedArray = new int[strideLength];
 
-        if (ForceConnection)
-        {
-            string _port = Port;
-            Open();
-        }
+        //if (ForceConnection)
+        //{
+        //    string _port = Port;
+        //    Open();
+        //}
+
+        //ArduinoDeviceManager deviceManager = new ArduinoDeviceManager();
+        //foreach (var key in deviceManager.SerialPorts.Values)
+        //{
+        //    Debug.Log(key.PortName);
+        //}
+
+        //foreach (COMPortInfo comPort in COMPortInfo.GetCOMPortsInfo())
+        //{
+        //    Debug.Log(string.Format("{0} – {1}", comPort.Name, comPort.Description));
+        //}
+
+        _Stream = new SerialPort();
+        _Stream = TryGetSerialPorts();
+        //_Stream = TryGetSerialPorts();
     }
 
     public void Open()
@@ -367,5 +387,106 @@ public class ArduinoConnector : MonoBehaviour
     void OnDestroy()
     {
         Instance = null;
+    }
+
+    SerialPort TryGetSerialPorts()
+    {
+        SerialPort com = new SerialPort();
+        foreach (string s in SerialPort.GetPortNames())
+        {
+            com.Close(); // To handle the exception, in case the port isn't found and then they try again...
+
+            bool portfound = false;
+            com.PortName = s;
+            com.BaudRate = 38400;
+            com.BaudRate = 9600;
+            try
+            {
+                com.Open();
+                Debug.Log("Trying port: " + s + "\r");
+            }
+            catch (IOException c)
+            {
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (InvalidOperationException c1)
+            {
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentNullException c2)
+            {
+                // System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c2);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (TimeoutException c3)
+            {
+                //  System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c3);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (UnauthorizedAccessException c4)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentOutOfRangeException c5)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c5);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentException c2)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c2);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            if (!portfound)
+            {
+                if (com.IsOpen) // Port has been opened properly...
+                {
+                    com.ReadTimeout = ReadTimeout; // 500 millisecond timeout...
+                    Debug.Log("Attemption to open port " + com.PortName + "\r");
+                    try
+                    {
+                        Debug.Log("Waiting for a response from controller: " + com.PortName + "\r");
+                        //string comms = com.ReadLine();
+                        int comms = com.ReadByte();
+                        Debug.Log("Reading From Port " + com.PortName + "\r");
+                        //if (comms.Substring(0, 1) == "A") // We have found the arduino!
+                        if (comms != 0)
+                        {
+                            Debug.Log(s + com.PortName + " Opened Successfully!" + "\r");
+                            //com.Write("a"); // Sends 0x74 to the arduino letting it know that we are connected!
+                            com.ReadTimeout = ReadTimeout;
+                            //com.Write("a");
+                            Debug.Log("Port " + com.PortName + " Opened Successfully!" + "\r");
+                            Debug.Log(com.BaudRate);
+                            Debug.Log(com.PortName);
+
+
+                            Port = _Stream.PortName;
+                            Baudrate = _Stream.BaudRate;
+                            Parity = _Stream.Parity;
+                            DataBits = _Stream.DataBits;
+                            StopBits = _Stream.StopBits;
+
+                            Open();
+
+                            return com;
+
+                        }
+                        else
+                        {
+                            Debug.Log("Port Not Found! Please cycle controller power and try again" + "\r");
+                            com.Close();
+                        }
+                    }
+                    catch (Exception e1)
+                    {
+                        Debug.Log("Incorrect Port! Trying again..." + e1);
+                        com.Close();
+                    }
+                }
+            }
+        }
+        return com;
     }
 }

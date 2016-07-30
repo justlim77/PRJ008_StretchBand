@@ -20,6 +20,10 @@ public class ArduinoUI : MonoBehaviour
     [Header("Sliders")]
     public Slider distanceSlider;
 
+    [Header("Canvas")]
+    [SerializeField] Canvas _MainCanvas;
+    [SerializeField] Animator _CanvasAnimator;
+
     [Header("Connection Canvas")]
     public KeyCode toggleConnectionCanvasKey = KeyCode.BackQuote;
     public GameObject connectionCanvas;
@@ -48,6 +52,8 @@ public class ArduinoUI : MonoBehaviour
 
         UpdatePortDropdown();
         OnDropdownValueChanged();
+
+        SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     void OnEnable()
@@ -130,13 +136,18 @@ public class ArduinoUI : MonoBehaviour
     public void UpdateMessage(string msg)
     {
         messageLabel.text = msg;
-        messageBackground.enabled = true;
+
+        if (string.IsNullOrEmpty(msg))
+        {
+            SetAnimation(CanvasAnimationState.ShowMessage);
+        }
+        else
+            SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     public void ClearMessage()
     {
-        messageLabel.text = string.Empty;
-        messageBackground.enabled = false;
+        SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     void UpdatePortDropdown()
@@ -165,4 +176,16 @@ public class ArduinoUI : MonoBehaviour
     {
         ArduinoConnector.Instance.RefreshPortList();
     }
+
+    void SetAnimation(CanvasAnimationState state)
+    {
+        string trigger = state.ToString().ToLower();
+        _CanvasAnimator.SetTrigger(trigger);
+    }
+}
+
+public enum CanvasAnimationState
+{
+    ShowMessage,
+    HideMessage
 }
