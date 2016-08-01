@@ -248,10 +248,17 @@ public class Bird : MonoBehaviour
         StartCoroutine(Landing());
     }
 
+    AnimationState _State;
     void SetAnimation(AnimationState state)
     {
         string trigger = state.ToString().ToLower();
+        _State = state;
         _Animator.SetTrigger(trigger);
+    }
+
+    public AnimationState GetAnimation()
+    {
+        return _State;
     }
 
     void OnTriggerEnter(Collider other)

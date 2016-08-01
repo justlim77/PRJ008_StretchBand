@@ -31,10 +31,11 @@ public class ThreadedJob
         }
     }
 
-    public virtual void Start ()
+    public virtual void Start()
     {
         _Thread = new System.Threading.Thread(Run);
         _Thread.Start();
+        //Debug.Log("Thread started.");
     }
 
     public virtual void Abort()

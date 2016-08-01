@@ -98,15 +98,15 @@ public class ArduinoConnector : MonoBehaviour
 
         _Stream = new SerialPort();
         _Stream = TryGetSerialPorts();
-        //_Stream = TryGetSerialPorts();
     }
 
     public void Open()
     {
         // Opens the serial port
-        _Stream = new SerialPort(Port, Baudrate, Parity, DataBits, StopBits);
-        Debug.Log(string.Format("Stream initialized with port {0}, baudrate {1}, parity {2}, {3} data bits, and stopbits set to {4}",
-            Port, Baudrate, Parity, DataBits, StopBits));
+        //_Stream = new SerialPort(Port, Baudrate, Parity, DataBits, StopBits);
+        _Stream.ReadTimeout = ReadTimeout;
+        Debug.Log(string.Format("Stream initialized with port {0}, baudrate {1}, parity {2}, {3} data bits, stopbits set to {4}, and read timeout at {5}",
+            _Stream.PortName, _Stream.BaudRate, _Stream.Parity, _Stream.DataBits, _Stream.StopBits, _Stream.ReadTimeout));
         Debug.Log("Open connection started...");
 
         //stream.DataReceived += (x,e) =>
@@ -123,35 +123,35 @@ public class ArduinoConnector : MonoBehaviour
         //    }
         //};
 
-        try
-        {
-            if (_Stream != null)
-            {
-                _Stream.Open();
-                _Stream.ReadTimeout = ReadTimeout;
-                Debug.Log("Port opened!");
-                //this.stream.DataReceived += DataReceivedHandler;
-                //this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+        //try
+        //{
+        //    if (_Stream != null)
+        //    {
+        //        _Stream.Open();
+        //        _Stream.ReadTimeout = ReadTimeout;
+        //        Debug.Log("Port opened!");
+        //        //this.stream.DataReceived += DataReceivedHandler;
+        //        //this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
 
-            }
-            else
-            {
-                if (_Stream.IsOpen)
-                {
-                    print("Port is already open.");
-                }
-                else
-                {
-                    print("Port is null.");
-                }
-            }
+        //    }
+        //    else
+        //    {
+        //        if (_Stream.IsOpen)
+        //        {
+        //            print("Port is already open.");
+        //        }
+        //        else
+        //        {
+        //            print("Port is null.");
+        //        }
+        //    }
 
-            Debug.Log("Open connection completed.");
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("Could not open serial port: " + e.Message);
-        }
+        //    Debug.Log("Open connection completed.");
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.LogWarning("Could not open serial port: " + e.Message);
+        //}
 
         //_running = true;
         //ThreadStart ts = new ThreadStart(ReadByte);
@@ -448,26 +448,39 @@ public class ArduinoConnector : MonoBehaviour
                     {
                         Debug.Log("Waiting for a response from controller: " + com.PortName + "\r");
                         //string comms = com.ReadLine();
+
+                        //_Stream = com;
+                        //_BandReadJob = new BandReadJob(ref _OutputArray, ref _CachedArray, StrideLength, _Stream);
+                        //_BandReadJob.Start();
                         int comms = com.ReadByte();
                         Debug.Log("Reading From Port " + com.PortName + "\r");
+                        Debug.Log("Value output: " + Convert.ToChar(comms));
                         //if (comms.Substring(0, 1) == "A") // We have found the arduino!
                         if (comms != 0)
                         {
+                            _OutputArray[0] = Convert.ToChar(comms);
+                            BandReadJob.StrideCount++;
+
                             Debug.Log(s + com.PortName + " Opened Successfully!" + "\r");
                             //com.Write("a"); // Sends 0x74 to the arduino letting it know that we are connected!
-                            com.ReadTimeout = ReadTimeout;
+                            //com.ReadTimeout = ReadTimeout;
                             //com.Write("a");
                             Debug.Log("Port " + com.PortName + " Opened Successfully!" + "\r");
                             Debug.Log(com.BaudRate);
                             Debug.Log(com.PortName);
 
+                            //Port = _Stream.PortName;
+                            //Baudrate = _Stream.BaudRate;
+                            //Parity = _Stream.Parity;
+                            //DataBits = _Stream.DataBits;
+                            //StopBits = _Stream.StopBits;
+                            Port = com.PortName;
+                            Baudrate = com.BaudRate;
+                            Parity = com.Parity;
+                            DataBits = com.DataBits;
+                            StopBits = com.StopBits;
 
-                            Port = _Stream.PortName;
-                            Baudrate = _Stream.BaudRate;
-                            Parity = _Stream.Parity;
-                            DataBits = _Stream.DataBits;
-                            StopBits = _Stream.StopBits;
-
+                            _Stream = com;
                             Open();
 
                             return com;
@@ -476,6 +489,7 @@ public class ArduinoConnector : MonoBehaviour
                         else
                         {
                             Debug.Log("Port Not Found! Please cycle controller power and try again" + "\r");
+                            _BandReadJob.Abort();
                             com.Close();
                         }
                     }

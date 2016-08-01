@@ -51,9 +51,9 @@ public class ArduinoUI : MonoBehaviour
         disconnectButton.onClick.AddListener(delegate { Close(); });
 
         UpdatePortDropdown();
-        OnDropdownValueChanged();
+        //OnDropdownValueChanged();
 
-        SetAnimation(CanvasAnimationState.HideMessage);
+        //SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     void OnEnable()
@@ -103,7 +103,7 @@ public class ArduinoUI : MonoBehaviour
 
     public void UpdateOutput()
     {
-        outputLabel.text = string.Format("{0} N | {1}", force, count);
+        outputLabel.text = string.Format("{0} N", force);
     }
 
     public void UpdateTimer(float time)
@@ -139,10 +139,10 @@ public class ArduinoUI : MonoBehaviour
 
         if (string.IsNullOrEmpty(msg))
         {
-            SetAnimation(CanvasAnimationState.ShowMessage);
+            SetAnimation(CanvasAnimationState.HideMessage);
         }
         else
-            SetAnimation(CanvasAnimationState.HideMessage);
+            SetAnimation(CanvasAnimationState.ShowMessage);
     }
 
     public void ClearMessage()

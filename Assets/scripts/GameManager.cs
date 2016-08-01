@@ -19,7 +19,10 @@ public class GameManager : MonoBehaviour
     public GameState GameState;
     public float GameDuration = 60.0f;
     public float DistanceToTravel = 100.0f;
+
+    [TextArea]
     public string PreGameMessage;
+    [TextArea]
     public string EndGameMessage;
 
     [Header("Bird")]
@@ -164,7 +167,16 @@ public class GameManager : MonoBehaviour
     IEnumerator EnableBoostWindow()
     {
         Bird.CanBoost = true;
-        ArduinoUI.Instance.UpdateMessage("ENERGY UP!\nPULL BAND TO BOOST");
+
+        float boostDuration = BoostWindow;
+        //while (boostDuration > 0 && Bird.GetAnimation() != AnimationState.Glide)
+        //{
+        //    boostDuration -= Time.deltaTime;
+        //    ArduinoUI.Instance.UpdateMessage(string.Format("ENERGY UP!\nPULL BAND TO GLIDE ({0:F0})", boostDuration));
+        //    yield return null;
+        //}
+        ArduinoUI.Instance.UpdateMessage(string.Format("ENERGY UP!\nPULL BAND TO GLIDE!"));
+
         yield return new WaitForSeconds(BoostWindow);
         ArduinoUI.Instance.ClearMessage();
         Bird.CanBoost = false;
