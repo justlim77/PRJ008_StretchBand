@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LevelPanel : MonoBehaviour
+public class LevelPanel : PanelBase
 {
     public LevelButton[] LevelButtons;
 

@@ -489,7 +489,9 @@ public class InteractionManager : MonoBehaviour
 					{
                         if(!ProgressBar.enabled)
                             ProgressBar.enabled = true;
-                        ProgressBar.fillAmount = Mathf.Clamp01(leftHandClickProgress);
+                        //ProgressBar.fillAmount = Mathf.Clamp01(leftHandClickProgress);
+                        if (leftHandClickProgress >= 0.5f)
+                            ProgressBar.fillAmount = MathF.ConvertRange(0.5f, 1, 0, 1, leftHandClickProgress);
 
                         if ((Time.realtimeSinceStartup - lastLeftHandTime) >= KinectInterop.Constants.ClickStayDuration)
 						{
@@ -603,7 +605,9 @@ public class InteractionManager : MonoBehaviour
 					{
                         if (!ProgressBar.enabled)
                             ProgressBar.enabled = true;
-                        ProgressBar.fillAmount = Mathf.Clamp01(rightHandClickProgress);
+                        //ProgressBar.fillAmount = Mathf.Clamp01(rightHandClickProgress);
+                        if(rightHandClickProgress >= 0.5f)
+                            ProgressBar.fillAmount = MathF.ConvertRange(0.5f, 1, 0, 1, rightHandClickProgress);
 
                         if ((Time.realtimeSinceStartup - lastRightHandTime) >= KinectInterop.Constants.ClickStayDuration)
 						{
@@ -828,8 +832,8 @@ public class InteractionManager : MonoBehaviour
 					dragInProgress = false;
 				}
 
-                ProgressBar.enabled = false;
-                ProgressBar.fillAmount = 0f;
+                //ProgressBar.enabled = false;
+                //ProgressBar.fillAmount = 0f;
 			}
 		}
 

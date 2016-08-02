@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 using System.Collections;
 
 public class InteractionListener : MonoBehaviour, InteractionListenerInterface
@@ -46,12 +48,12 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 		intInfoTime = Time.realtimeSinceStartup;
 	}
 
-	public bool HandClickDetected(long userId, int userIndex, bool isRightHand, Vector3 handScreenPos)
-	{
-		if (userIndex != playerIndex)
-			return false;
+    public bool HandClickDetected(long userId, int userIndex, bool isRightHand, Vector3 handScreenPos)
+    {
+        if (userIndex != playerIndex)
+            return false;
 
-		string sGestureText = string.Format ("{0} Click detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
+        string sGestureText = string.Format("{0} Click detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
 
         InteractionManager manager = InteractionManager.Instance;
         manager.CalibrationText.text = sGestureText;

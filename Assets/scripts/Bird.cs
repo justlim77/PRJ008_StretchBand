@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public enum AnimationState
 {
@@ -41,6 +42,7 @@ public class Bird : MonoBehaviour
     public KeyCode BoostKey = KeyCode.Space;
     public ParticleSystem BoostParticles;
     public float BoostRadius = 5.0f;
+    public BoostBar BoostBar;
     public bool CanBoost { get; set; }
 
     [Header("Magnet")]
@@ -100,6 +102,7 @@ public class Bird : MonoBehaviour
     {
         CancelInvoke();
         SetAnimation(AnimationState.Idle);
+        BoostBar.Reset();
         BoostParticles.Stop();
         CanBoost = false;
         SetInMotion(false);
@@ -192,10 +195,11 @@ public class Bird : MonoBehaviour
     {
         forceApplied = true;
 
-        SetAnimation(AnimationState.Glide); // Change to glide animation
-        Radius = BoostRadius;               // Increase collection radius
-        BoostParticles.Play();              // Play boost particles
-        _Force *= BoostMultiplier;          // Multiply forward force
+        SetAnimation(AnimationState.Glide);     // Change to glide animation
+        Radius = BoostRadius;                   // Increase collection radius
+        BoostBar.SetBoostColor();               // Change bar color
+        BoostParticles.Play();                  // Play boost particles
+        _Force *= BoostMultiplier;              // Multiply forward force
         ArduinoUI.Instance.UpdateMessage("BOOSTING!");  // Update message
 
         Invoke("CancelBoost", BoostTime);
@@ -207,6 +211,7 @@ public class Bird : MonoBehaviour
 
         SetAnimation(AnimationState.Fly);       // Change to fly animation
         Radius = _OriginalRadius;               // Revert collection radius
+        BoostBar.ResetColor();                  // Revert bar color
         BoostParticles.Stop();                  // Stop boost particles
         GameManager.Instance.ResetBerries();    // Reset boost berry bar
         _Force = MovementForce;                 // Revert forward force
@@ -217,6 +222,7 @@ public class Bird : MonoBehaviour
     {
         takeoff = true;
 
+        BoostBar.ShowBar(true);
         SetAnimation(AnimationState.Takeoff);   // Set animation to takeoff state
         do
         {
@@ -232,6 +238,8 @@ public class Bird : MonoBehaviour
     {
         CanBoost = false;
 
+        BoostBar.ResetColor();      // Revert bar color
+        BoostBar.ShowBar(false);    // Hide bar
         Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
         do
         {

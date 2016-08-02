@@ -43,6 +43,10 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        InteractionManager manager = InteractionManager.Instance;
+        manager.controlMouseCursor = false;
+        manager.allowHandClicks = false;
+
         SetState(GameState.Pregame);
     }
 
@@ -149,6 +153,9 @@ public class GameManager : MonoBehaviour
         _BoostBerries++;
         _TotalBerries++;
 
+        float _BoostProgress = Mathf.Clamp01(_BoostBerries * 0.1f);
+        Bird.BoostBar.UpdateProgress(_BoostProgress);
+
         if (_BoostBerries >= BerriesRequiredToBoost)
         {
             if (!_IsBoosting)
@@ -162,6 +169,7 @@ public class GameManager : MonoBehaviour
     public void ResetBerries()
     {
         _BoostBerries = 0;
+        Bird.BoostBar.UpdateProgress(0);
     }
 
     IEnumerator EnableBoostWindow()
