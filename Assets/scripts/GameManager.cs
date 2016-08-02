@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         InteractionManager manager = InteractionManager.Instance;
         manager.controlMouseCursor = false;
         manager.allowHandClicks = false;
