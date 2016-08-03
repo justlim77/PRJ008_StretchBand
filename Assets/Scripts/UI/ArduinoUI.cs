@@ -10,15 +10,28 @@ public class ArduinoUI : MonoBehaviour
 {
     public static ArduinoUI Instance { get; private set; }
 
+
     [Header("Labels")]
-    public Text outputLabel;
-    public Text distanceLabel;
-    public Text timerLabel;
-    public Text messageLabel;
-    public Image messageBackground;
+    public Text FruitLabel;
+    public Text OutputLabel;
+    public Text DistanceLabel;
+    public Text TimerLabel;
+    public Text MessageLabel;
+    public Image MessageBackground;
 
     [Header("Sliders")]
-    public Slider distanceSlider;
+    public Slider DistanceSlider;
+
+    public BoostBar BoostBar;
+
+    [Header("Messages")]
+    [TextArea]
+    public string PregameMessage;
+    [TextArea]
+    public string PostgameMessage;
+
+    [Header("UI Animators")]
+    public Animator FruitLabelAnimator;
 
     [Header("Canvas")]
     [SerializeField] Canvas _MainCanvas;
@@ -36,40 +49,126 @@ public class ArduinoUI : MonoBehaviour
     public int force;
     public int count;
 
+    float _DistanceToTravel = 0f;
+    int _TotalBerries = 0;
+
     void Awake()
     {
         if (Instance == null)
             Instance = this;
     }
 
-	// Use this for initialization
 	void Start ()
     {
-        portDropdown.onValueChanged.AddListener(delegate { OnDropdownValueChanged(); });
-        refreshButton.onClick.AddListener(delegate { RefreshPortList(); });
-        connectButton.onClick.AddListener(delegate { Open(); });
-        disconnectButton.onClick.AddListener(delegate { Close(); });
+        //portDropdown.onValueChanged.AddListener(delegate { OnDropdownValueChanged(); });
+        //refreshButton.onClick.AddListener(delegate { RefreshPortList(); });
+        //connectButton.onClick.AddListener(delegate { Open(); });
+        //disconnectButton.onClick.AddListener(delegate { Close(); });
 
-        UpdatePortDropdown();
-        //OnDropdownValueChanged();
-
-        //SetAnimation(CanvasAnimationState.HideMessage);
+        //UpdatePortDropdown();
     }
 
     void OnEnable()
     {
-        ArduinoConnector.OutputReceived += OnOutputReceived;
+        ArduinoConnector.OutputReceived += ArduinoConnector_OutputReceived;
+        GameManager.GameStateChanged += GameManager_GameStateChanged;
+        GameManager.TimerChanged += GameManager_TimerChanged;
+        Bird.FruitAmountChanged += Bird_FruitAmountChanged;
+        Bird.BoostStateChanged += Bird_BoostStateChanged;
+        Bird.AnimationStateChanged += Bird_AnimationStateChanged;
+        Bird.DistanceChanged += Bird_DistanceChanged;
+    }
+
+    private void Bird_DistanceChanged(object sender, float distance)
+    {
+        UpdateDistance(distance);
+    }
+
+    private void Bird_AnimationStateChanged(object sender, AnimationStateChangedEventArgs e)
+    {
+        switch (e.AnimationState)
+        {           
+            case AnimationState.Takeoff:
+                BoostBar.ShowBar(true);
+                break;
+            case AnimationState.Landing:
+                BoostBar.ResetColor();      // Revert bar color
+                BoostBar.ShowBar(false);    // Hide bar
+                break;
+            case AnimationState.Fly:
+                BoostBar.ResetColor();
+                break;
+            case AnimationState.Glide:
+                ClearMessage();
+                break;
+        }
+    }
+
+    private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
+    {
+        switch (e.BoostState)
+        {
+            case BoostState.On:
+                UpdateMessage("Energy Up!\nPull band to boost!");
+                break;
+            case BoostState.Off:
+                ClearMessage();
+                break;
+        }
+    }
+
+    private void GameManager_TimerChanged(object sender, TimerChangedEventArgs e)
+    {
+        UpdateTimer(e.Time);
     }
 
     void OnDisable()
     {
-        ArduinoConnector.OutputReceived -= OnOutputReceived;
+        ArduinoConnector.OutputReceived -= ArduinoConnector_OutputReceived;
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
+        GameManager.TimerChanged -= GameManager_TimerChanged;    
+        Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
+        Bird.BoostStateChanged -= Bird_BoostStateChanged;
+        Bird.DistanceChanged -= Bird_DistanceChanged;
     }
 
-    private void OnOutputReceived(object sender, OutputReceivedEventArgs e)
+    private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
+    {
+        switch (e.GameState)
+        {
+            case GameState.Pregame:
+                UpdateTimer(e.GameDuration);
+                UpdateMessage(PregameMessage);
+                UpdateFruits(0);
+                _DistanceToTravel = e.DistanceToTravel;
+                break;
+            case GameState.Playing:
+                ClearMessage();
+                break;
+            case GameState.End:
+                UpdateMessage(PostgameMessage);
+                break;
+        }
+    }
+
+    private void ArduinoConnector_OutputReceived(object sender, OutputReceivedEventArgs e)
     {
         force = e.Force;
         count = e.Count;
+
+        OutputLabel.text = string.Format("{0} N | {1}", force, count);
+    }
+
+    private void Bird_FruitAmountChanged(object sender, FruitAmountChangedEventArgs e)
+    {
+        // Animate UI
+        string trigger = FruitLabelAnimationState.Collect.ToString().ToLower();
+        FruitLabelAnimator.SetTrigger(trigger);
+        FruitLabel.text = e.TotalBerries.ToString();
+
+        // Update boost bar progress
+        float boostProgress = Mathf.Clamp01(e.BoostBerries * 0.1f);
+        BoostBar.UpdateProgress(boostProgress);
     }
 
     void Update()
@@ -78,8 +177,6 @@ public class ArduinoUI : MonoBehaviour
         {
             connectionCanvas.SetActive(!connectionCanvas.activeSelf);
         }
-
-        UpdateOutput();
     }
 
     void OnDropdownValueChanged()
@@ -92,18 +189,13 @@ public class ArduinoUI : MonoBehaviour
         Instance = null;
     }
 
-    public void UpdateDistance(float distance, float distanceToTravel)
+    public void UpdateDistance(float currentDistance)
     {
-        distanceLabel.text = string.Format("{0:F0} / {1} m", distance, distanceToTravel);
-        float oldRange = 0 - distanceToTravel;
-        float newRange = distanceSlider.maxValue - distanceSlider.minValue;
-        float sliderValue = ((distance - 0) / (distanceToTravel - 0) ) * newRange + 0;
-        distanceSlider.value = sliderValue;
-    }
-
-    public void UpdateOutput()
-    {
-        outputLabel.text = string.Format("{0} N", force);
+        DistanceLabel.text = string.Format("{0:F0} / {1} m", currentDistance, _DistanceToTravel);
+        float oldRange = 0 - _DistanceToTravel;
+        float newRange = DistanceSlider.maxValue - DistanceSlider.minValue;
+        float sliderValue = ((currentDistance - 0) / (_DistanceToTravel - 0) ) * newRange + 0;
+        DistanceSlider.value = sliderValue;
     }
 
     public void UpdateTimer(float time)
@@ -125,17 +217,17 @@ public class ArduinoUI : MonoBehaviour
         if (time <= 0.0f)
         {
             time = 0.0f;
-            timerLabel.text = "Time's Up";
+            TimerLabel.text = "Time's Up";
         }
         else
         {
-            timerLabel.text = string.Format("{0:F0}", time);
+            TimerLabel.text = string.Format("{0:F0}", time);
         }
     }
 
     public void UpdateMessage(string msg)
     {
-        messageLabel.text = msg;
+        MessageLabel.text = msg;
 
         if (string.IsNullOrEmpty(msg))
         {
@@ -143,6 +235,11 @@ public class ArduinoUI : MonoBehaviour
         }
         else
             SetAnimation(CanvasAnimationState.ShowMessage);
+    }
+
+    public void UpdateFruits(int value)
+    {
+        FruitLabel.text = string.Format("{0}", value);
     }
 
     public void ClearMessage()
@@ -188,4 +285,9 @@ public enum CanvasAnimationState
 {
     ShowMessage,
     HideMessage
+}
+
+public enum FruitLabelAnimationState
+{
+    Collect
 }

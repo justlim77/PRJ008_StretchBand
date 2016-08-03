@@ -363,7 +363,7 @@ public class ArduinoConnector : MonoBehaviour
 
     string outputString = "";
     int force, count;
-    public void OnOutputReceived(int[] output)
+    private void OnOutputReceived(int[] output)
     {
         if (OutputReceived != null)
         {

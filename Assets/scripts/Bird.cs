@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public enum AnimationState
 {
@@ -14,6 +15,28 @@ public enum AnimationState
     Jump,
     Hunting,
     Die
+}
+
+public enum BoostState
+{
+   On,
+   Off
+}
+
+public class BoostStateChangedEventArgs : EventArgs
+{
+    public BoostState BoostState;
+}
+
+public class AnimationStateChangedEventArgs : EventArgs
+{
+    public AnimationState AnimationState;
+}
+
+public class FruitAmountChangedEventArgs : EventArgs
+{
+    public int BoostBerries;
+    public int TotalBerries;
 }
 
 public class Bird : MonoBehaviour
@@ -45,6 +68,20 @@ public class Bird : MonoBehaviour
     public BoostBar BoostBar;
     public bool CanBoost { get; set; }
 
+    #region Events and Delegates
+    public delegate void FruitAmountChangedEventHandler(object sender, FruitAmountChangedEventArgs e);
+    public static event FruitAmountChangedEventHandler FruitAmountChanged;
+
+    public delegate void DistanceChangedEventHandler(object sender, float distance);
+    public static event DistanceChangedEventHandler DistanceChanged;
+
+    public delegate void BoostStateChangedEventHandler(object sender, BoostStateChangedEventArgs e);
+    public static event BoostStateChangedEventHandler BoostStateChanged;
+
+    public delegate void AnimationStateChangedEventHandler(object sender, AnimationStateChangedEventArgs e);
+    public static event AnimationStateChangedEventHandler AnimationStateChanged;
+    #endregion
+
     [Header("Magnet")]
     [SerializeField] Transform _MagnetPoint;
     Transform MagnetPoint
@@ -60,8 +97,7 @@ public class Bird : MonoBehaviour
         }
     }
 
-
-    public float Distance
+    float Distance
     {
         get { return transform.position.z; }
     }
@@ -74,11 +110,42 @@ public class Bird : MonoBehaviour
         set { _Collider.radius = value; }
     }
 
+    BoostState _BoostState = BoostState.Off;
+    BoostState BoostState
+    {
+        get
+        {
+            return _BoostState;
+        }
+        set
+        {
+            _BoostState = value;
+            OnBoostStateChanged();
+        }
+    }
+
     Animator _Animator;
     Vector3 _Force;
     Vector3 _OriginalPosition;
     Rigidbody _Rigidbody;
     ArduinoController _ArduinoController;
+
+    int _TotalBerries { get; set; }
+
+    int _BoostBerries = 0;
+    public int Berries
+    {
+        get
+        {
+            return _BoostBerries;
+        }
+        set
+        {
+            _TotalBerries = value;
+            _BoostBerries = value;
+            OnFruitAmountChanged();
+        }
+    }
 
     void Awake()
     {
@@ -95,18 +162,80 @@ public class Bird : MonoBehaviour
     {
         _ArduinoController = ArduinoController.Instance;
 
+        BerriesRequiredToBoost = 10;
+
         Initialize();
 	}
+
+    void OnEnable()
+    {
+        GameManager.GameStateChanged += GameManager_GameStateChanged;
+        Collectable.CollectableCollected += Collectable_CollectableCollected;
+    }
+
+    private void Collectable_CollectableCollected(object sender, EventArgs e)
+    {
+        Berries++;
+        OnFruitAmountChanged();
+
+        // If collected enough berries to boost
+        if (Berries >= BerriesRequiredToBoost)
+        {
+            if (BoostState == BoostState.Off)
+            {
+                BoostState = BoostState.On;
+                StartCoroutine(EnableBoostWindow());
+            }
+        }
+    }
+
+    IEnumerator EnableBoostWindow()
+    {
+        CanBoost = true;
+
+        yield return new WaitForSeconds(BoostTime);
+
+        CanBoost = false;
+
+        Berries = 0;
+    }
+
+    void OnDisable()
+    {
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
+        Collectable.CollectableCollected -= Collectable_CollectableCollected;
+    }
+
+    private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
+    {
+        switch (e.GameState)
+        {
+            case GameState.Pregame:
+                Initialize();
+                break;
+            case GameState.Playing:
+                _CanMove = true;
+                break;
+            case GameState.End:
+                SetInMotion(false);
+                Land();
+                break;
+        }
+    }
 
     public void Initialize()
     {
         CancelInvoke();
-        SetAnimation(AnimationState.Idle);
+        AnimationState = AnimationState.Idle;
+        _TotalBerries = Berries = 0;
         BoostBar.Reset();
         BoostParticles.Stop();
         CanBoost = false;
+        _CanMove = false;
+        takeoff = false;
         SetInMotion(false);
         transform.position = _OriginalPosition;
+        transform.rotation = Quaternion.identity;
     }
 
     public void SetInMotion(bool value)
@@ -119,19 +248,9 @@ public class Bird : MonoBehaviour
     bool takeoff = false;
     void Update()
     {
-        //GameManager manager = GameManager.Instance;
-
-        //// Check for initial stretch to start
-        //if (manager.GameState.Equals(GameState.Pregame) && _ArduinoController.ForceDetected())
-        //{
-        //    manager.SetState(GameState.Playing);
-        //    Boost();
-        //}
-
-        // Spacebar start
-        if (CheckForce())
+        if (BoostDetected())
         {
-            if (takeoff == false)
+            if (!takeoff)
             {
                 StartCoroutine(TakeOff());
             }
@@ -142,65 +261,63 @@ public class Bird : MonoBehaviour
             }
         }
 
-        //if (CanBoost)
-        //{
-        //    if (CheckForce())
-        //    {
-        //        Boost();
-        //    }
-        //}
-
         UpdateDistance();
     }
 
-	void FixedUpdate ()
+	void FixedUpdate()
     {
-        Move();
+        if (_CanMove)
+        {
+            Move();
+        }
 	}
 
+    float _CachedDistance = 0f;
     void UpdateDistance()
     {
-        //Distance = transform.position.z;
-    }
-
-    void Move()
-    {
-        if (GameManager.Instance.GameState == GameState.Playing)
+        if (_CachedDistance != Distance)
         {
-            InteractionManager interactionManager = InteractionManager.Instance;
-            if (interactionManager != null)
-            {
-                Vector2 flightScreenPosition = Vector2.Lerp(interactionManager.GetLeftHandScreenPos(), interactionManager.GetRightHandScreenPos(), 0.5f);
-                //Debug.Log(flightScreenPosition);
-
-                float x = MathF.ConvertRange(0, 1, HorizontalMin, HorizontalMax, flightScreenPosition.x);
-                float y = MathF.ConvertRange(0, 1, VerticalMin, VerticalMax, flightScreenPosition.y);
-
-                GuidedForce = new Vector3(x, y, _Rigidbody.position.z);
-            }
-
-            Vector3 targetPos = Vector3.Lerp(_Rigidbody.position, GuidedForce, 3 * Time.deltaTime);
-            _Rigidbody.position = targetPos;
-
-            _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
+            _CachedDistance = Distance;
+            OnDistanceChanged();
         }
     }
 
-    bool CheckForce()
+    bool _CanMove = false;
+    void Move()
     {
-        return ((Input.GetKeyDown(BoostKey) || _ArduinoController.ForceDetected(ForceThreshold)) && forceApplied == false);
+        InteractionManager interactionManager = InteractionManager.Instance;
+        if (interactionManager != null)
+        {
+            Vector2 flightScreenPosition = Vector2.Lerp(interactionManager.GetLeftHandScreenPos(), interactionManager.GetRightHandScreenPos(), 0.5f);
+            //Debug.Log(flightScreenPosition);
+
+            float x = MathF.ConvertRange(0, 1, HorizontalMin, HorizontalMax, flightScreenPosition.x);
+            float y = MathF.ConvertRange(0, 1, VerticalMin, VerticalMax, flightScreenPosition.y);
+
+            GuidedForce = new Vector3(x, y, _Rigidbody.position.z);
+        }
+
+        Vector3 targetPos = Vector3.Lerp(_Rigidbody.position, GuidedForce, 3 * Time.deltaTime);
+        _Rigidbody.position = targetPos;
+
+        _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
+    }
+
+    bool BoostDetected()
+    {
+        return ((Input.GetKeyDown(BoostKey) || _ArduinoController.ForceDetected(ForceThreshold, true)) && forceApplied == false);
     }    
 
     void Boost()
     {
         forceApplied = true;
 
-        SetAnimation(AnimationState.Glide);     // Change to glide animation
-        Radius = BoostRadius;                   // Increase collection radius
-        BoostBar.SetBoostColor();               // Change bar color
-        BoostParticles.Play();                  // Play boost particles
-        _Force *= BoostMultiplier;              // Multiply forward force
-        ArduinoUI.Instance.UpdateMessage("BOOSTING!");  // Update message
+        //BoostState = BoostState.On;
+        AnimationState = AnimationState.Glide;          // Change to glide animation
+        Radius = BoostRadius;                           // Increase collection radius
+        BoostBar.SetBoostColor();                       // Change bar color
+        BoostParticles.Play();                          // Play boost particles
+        _Force *= BoostMultiplier;                      // Multiply forward force
 
         Invoke("CancelBoost", BoostTime);
     }
@@ -209,21 +326,19 @@ public class Bird : MonoBehaviour
     {
         forceApplied = false;
 
-        SetAnimation(AnimationState.Fly);       // Change to fly animation
+        BoostState = BoostState.Off;
+        AnimationState = AnimationState.Fly;    // Change to fly animation
         Radius = _OriginalRadius;               // Revert collection radius
-        BoostBar.ResetColor();                  // Revert bar color
         BoostParticles.Stop();                  // Stop boost particles
-        GameManager.Instance.ResetBerries();    // Reset boost berry bar
+        Berries = 0;                            // Reset boost berry bar
         _Force = MovementForce;                 // Revert forward force
-        ArduinoUI.Instance.ClearMessage();      // Clear message
     }
 
     IEnumerator TakeOff()
     {
         takeoff = true;
 
-        BoostBar.ShowBar(true);
-        SetAnimation(AnimationState.Takeoff);   // Set animation to takeoff state
+        AnimationState = AnimationState.Takeoff;   // Set animation to takeoff state
         do
         {
             transform.position = Vector3.MoveTowards(this.transform.position, Center, TakeoffSpeed * Time.deltaTime);
@@ -237,18 +352,21 @@ public class Bird : MonoBehaviour
     IEnumerator Landing()
     {
         CanBoost = false;
+        _CanMove = false;
 
-        BoostBar.ResetColor();      // Revert bar color
-        BoostBar.ShowBar(false);    // Hide bar
+        CancelBoost();
+
         Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
         do
         {
+            transform.LookAt(targetPos);
             transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
             yield return new WaitForFixedUpdate();
         } while (Vector3.Distance(transform.position, targetPos) != 0f);
-        SetAnimation(AnimationState.Landing);
+        AnimationState = AnimationState.Landing;
+        transform.rotation = Quaternion.identity;
 
-        takeoff = false;
+        //takeoff = false;
     }
 
     public void Land()
@@ -256,18 +374,19 @@ public class Bird : MonoBehaviour
         StartCoroutine(Landing());
     }
 
-    AnimationState _State;
-    void SetAnimation(AnimationState state)
+    AnimationState _AnimationState;
+    public AnimationState AnimationState
     {
-        string trigger = state.ToString().ToLower();
-        _State = state;
-        _Animator.SetTrigger(trigger);
+        get { return _AnimationState; }
+        set {
+            _AnimationState = value;
+            string trigger = value.ToString().ToLower();
+            _Animator.SetTrigger(trigger);
+            OnAnimationStateChanged();
+        }
     }
 
-    public AnimationState GetAnimation()
-    {
-        return _State;
-    }
+    public int BerriesRequiredToBoost { get; private set; }
 
     void OnTriggerEnter(Collider other)
     {
@@ -275,6 +394,38 @@ public class Bird : MonoBehaviour
         if (interactable != null)
         {
             interactable.Interact(this, MagnetPoint);
+        }
+    }
+
+    private void OnFruitAmountChanged()
+    {
+        if (FruitAmountChanged != null)
+        {
+            FruitAmountChanged(this, new FruitAmountChangedEventArgs() { BoostBerries = Berries, TotalBerries = _TotalBerries });
+        }
+    }
+
+    private void OnDistanceChanged()
+    {
+        if (DistanceChanged != null)
+        {
+            DistanceChanged(this, Distance);
+        }
+    }
+
+    private void OnBoostStateChanged()
+    {
+        if (BoostStateChanged != null)
+        {
+            BoostStateChanged(this, new BoostStateChangedEventArgs() { BoostState = BoostState });
+        }
+    }
+
+    private void OnAnimationStateChanged()
+    {
+        if (AnimationStateChanged != null)
+        {
+            AnimationStateChanged(this, new AnimationStateChangedEventArgs() { AnimationState = _AnimationState });
         }
     }
 }

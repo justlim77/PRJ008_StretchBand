@@ -10,20 +10,35 @@ public enum GameState
     End
 }
 
+public class GameStateChangedEventArgs : EventArgs
+{
+    public GameState GameState;
+    public float DistanceToTravel;
+    public float GameDuration;
+}
+
+public class TimerChangedEventArgs : EventArgs
+{
+    public float Time;
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public static int BerriesRequiredToBoost = 10;
 
+    #region Events and Delegates
+    public delegate void GameStateChangedEventHandler(object sender, GameStateChangedEventArgs e);
+    public static event GameStateChangedEventHandler GameStateChanged;
+
+    public delegate void TimerChangedEventHandler(object sender, TimerChangedEventArgs e);
+    public static event TimerChangedEventHandler TimerChanged;
+    #endregion
+
     [Header("Game Info")]
     public GameState GameState;
     public float GameDuration = 60.0f;
     public float DistanceToTravel = 100.0f;
-
-    [TextArea]
-    public string PreGameMessage;
-    [TextArea]
-    public string EndGameMessage;
 
     [Header("Bird")]
     public Bird Bird;
@@ -31,7 +46,8 @@ public class GameManager : MonoBehaviour
     public float BoostWindow = 5.0f;
 
     int _BoostBerries;
-    int _TotalBerries;
+    public int TotalBerries
+    { get; private set; }
 
     public float ElapsedTime { get; private set; }
 
@@ -50,6 +66,23 @@ public class GameManager : MonoBehaviour
         manager.allowHandClicks = false;
 
         SetState(GameState.Pregame);
+    }
+
+    void OnEnable()
+    {
+        Bird.DistanceChanged += Bird_DistanceChanged;
+    }
+    void OnDisable()
+    {
+        Bird.DistanceChanged -= Bird_DistanceChanged;
+    }
+
+    private void Bird_DistanceChanged(object sender, float distance)
+    {
+        if (distance >= DistanceToTravel)
+        {
+            SetState(GameState.End);
+        }
     }
 
     bool updateStats = false;
@@ -71,30 +104,40 @@ public class GameManager : MonoBehaviour
             //ElapsedTime = Time.time - startTime;
             ElapsedTime -= Time.deltaTime;
             ElapsedTime = Mathf.Clamp(ElapsedTime, 0.0f, GameDuration);
+            OnTimerChanged();
         }
 
         if (updateStats)
         {
             UpdateStats();
-        }
+        }     
+    }
 
-        // Check game win
-        CheckGameWin();      
+    public void OnGameStateChanged(GameState state)
+    {
+        if (GameStateChanged != null)   // If there are listeners
+        {
+            GameStateChanged(this, new GameStateChangedEventArgs()
+            {
+                GameState = GameState,
+                GameDuration = GameDuration,
+                DistanceToTravel = DistanceToTravel
+            });
+        }
+    }
+
+    public void OnTimerChanged()
+    {
+        if (TimerChanged != null)
+        {
+            TimerChanged(this, new TimerChangedEventArgs() { Time = ElapsedTime });
+        }
     }
 
     void UpdateStats()
     {
-        ArduinoUI.Instance.UpdateDistance(Bird.Distance, DistanceToTravel);
-        ArduinoUI.Instance.UpdateTimer(ElapsedTime);
-        ArduinoUI.Instance.UpdateOutput();
-    }
-
-    void CheckGameWin()
-    {
-        if (Bird.Distance >= DistanceToTravel)
-        {
-            SetState(GameState.End);
-        }
+        //ArduinoUI.Instance.UpdateDistance(Bird.Distance);
+        //ArduinoUI.Instance.UpdateTimer(ElapsedTime);
     }
 
     public void SetState(GameState state)
@@ -103,29 +146,24 @@ public class GameManager : MonoBehaviour
             return;
 
         GameState = state;
+        OnGameStateChanged(state);
 
         switch (state)
         {
             case GameState.Pregame:
                 ResetTimer();
-                ArduinoUI.Instance.UpdateMessage(PreGameMessage);
-                Bird.Initialize();
                 updateStats = false;
                 UpdateStats();
-                //TileManager.Instance.Initialize();
                 BirdHouse.Distance = DistanceToTravel + Bird.LandingForwardBuffer;
                 break;
             case GameState.Playing:
                 StartTimer();
-                ArduinoUI.Instance.ClearMessage();
                 Bird.SetInMotion(true);
                 updateStats = true;
                 break;
             case GameState.End:
-                ArduinoUI.Instance.UpdateMessage(EndGameMessage);
                 StopTimer();
                 updateStats = false;
-                Bird.Land();
                 break;
         }
     }
@@ -140,59 +178,11 @@ public class GameManager : MonoBehaviour
     void ResetTimer()
     {
         timerStart = false;
-        //ElapsedTime = 0;
         ElapsedTime = GameDuration;
     }
 
     void StopTimer()
     {
         timerStart = false;
-    }
-
-    bool _IsBoosting = false;
-    public void AddBerry()
-    {
-        _BoostBerries++;
-        _TotalBerries++;
-
-        float _BoostProgress = Mathf.Clamp01(_BoostBerries * 0.1f);
-        Bird.BoostBar.UpdateProgress(_BoostProgress);
-
-        if (_BoostBerries >= BerriesRequiredToBoost)
-        {
-            if (!_IsBoosting)
-            {
-                _IsBoosting = true;
-                StartCoroutine(EnableBoostWindow());
-            }
-        }
-    }
-
-    public void ResetBerries()
-    {
-        _BoostBerries = 0;
-        Bird.BoostBar.UpdateProgress(0);
-    }
-
-    IEnumerator EnableBoostWindow()
-    {
-        Bird.CanBoost = true;
-
-        float boostDuration = BoostWindow;
-        //while (boostDuration > 0 && Bird.GetAnimation() != AnimationState.Glide)
-        //{
-        //    boostDuration -= Time.deltaTime;
-        //    ArduinoUI.Instance.UpdateMessage(string.Format("ENERGY UP!\nPULL BAND TO GLIDE ({0:F0})", boostDuration));
-        //    yield return null;
-        //}
-        ArduinoUI.Instance.UpdateMessage(string.Format("ENERGY UP!\nPULL BAND TO GLIDE!"));
-
-        yield return new WaitForSeconds(BoostWindow);
-        ArduinoUI.Instance.ClearMessage();
-        Bird.CanBoost = false;
-
-        ResetBerries();
-
-        _IsBoosting = false;
     }
 }
