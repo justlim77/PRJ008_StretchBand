@@ -196,7 +196,8 @@ public class ArduinoConnector : MonoBehaviour
         if(_Thread != null)
             _Thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
 
-        _BandReadJob.Abort();
+        if(_BandReadJob != null)
+            _BandReadJob.Abort();
 
         Debug.Log("Close connection completed.");
     }
