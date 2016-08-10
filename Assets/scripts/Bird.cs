@@ -371,7 +371,7 @@ public class Bird : MonoBehaviour
 
         Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
         do
-        {
+        {            
             transform.LookAt(targetPos);
             transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
             yield return new WaitForFixedUpdate();
