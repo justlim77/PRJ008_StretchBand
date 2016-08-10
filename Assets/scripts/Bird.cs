@@ -130,7 +130,19 @@ public class Bird : MonoBehaviour
     Rigidbody _Rigidbody;
     ArduinoController _ArduinoController;
 
-    int _TotalBerries { get; set; }
+    int _TotalBerries = 0;
+    public int TotalBerries
+    {
+        get
+        {
+            return _TotalBerries;
+        }
+        set
+        {
+            _TotalBerries = value;
+            OnFruitAmountChanged();
+        }
+    }
 
     int _BoostBerries = 0;
     public int Berries
@@ -141,7 +153,6 @@ public class Bird : MonoBehaviour
         }
         set
         {
-            _TotalBerries = value;
             _BoostBerries = value;
             OnFruitAmountChanged();
         }
@@ -176,7 +187,7 @@ public class Bird : MonoBehaviour
     private void Collectable_CollectableCollected(object sender, EventArgs e)
     {
         Berries++;
-        OnFruitAmountChanged();
+        TotalBerries++;
 
         // If collected enough berries to boost
         if (Berries >= BerriesRequiredToBoost)
@@ -227,7 +238,8 @@ public class Bird : MonoBehaviour
     {
         CancelInvoke();
         AnimationState = AnimationState.Idle;
-        _TotalBerries = Berries = 0;
+        TotalBerries = 0;
+        Berries = 0;
         BoostBar.Reset();
         BoostParticles.Stop();
         CanBoost = false;
@@ -401,7 +413,7 @@ public class Bird : MonoBehaviour
     {
         if (FruitAmountChanged != null)
         {
-            FruitAmountChanged(this, new FruitAmountChangedEventArgs() { BoostBerries = Berries, TotalBerries = _TotalBerries });
+            FruitAmountChanged(this, new FruitAmountChangedEventArgs() { BoostBerries = Berries, TotalBerries = TotalBerries });
         }
     }
 

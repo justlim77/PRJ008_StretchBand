@@ -156,7 +156,7 @@ public class ArduinoUI : MonoBehaviour
         force = e.Force;
         count = e.Count;
 
-        OutputLabel.text = string.Format("{0} N | {1}", force, count);
+        OutputLabel.text = string.Format("{0} N", force);
     }
 
     private void Bird_FruitAmountChanged(object sender, FruitAmountChangedEventArgs e)
@@ -191,7 +191,7 @@ public class ArduinoUI : MonoBehaviour
 
     public void UpdateDistance(float currentDistance)
     {
-        DistanceLabel.text = string.Format("{0:F0} / {1} m", currentDistance, _DistanceToTravel);
+        //DistanceLabel.text = string.Format("{0:F0} / {1} m", currentDistance, _DistanceToTravel);
         float oldRange = 0 - _DistanceToTravel;
         float newRange = DistanceSlider.maxValue - DistanceSlider.minValue;
         float sliderValue = ((currentDistance - 0) / (_DistanceToTravel - 0) ) * newRange + 0;
