@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 using System;
 
 public enum AnimationState
@@ -19,8 +18,9 @@ public enum AnimationState
 
 public enum BoostState
 {
-   On,
-   Off
+   Ignition,
+   Boosting,
+   Cancelled
 }
 
 public class BoostStateChangedEventArgs : EventArgs
@@ -110,7 +110,7 @@ public class Bird : MonoBehaviour
         set { _Collider.radius = value; }
     }
 
-    BoostState _BoostState = BoostState.Off;
+    BoostState _BoostState = BoostState.Cancelled;
     BoostState BoostState
     {
         get
@@ -184,6 +184,12 @@ public class Bird : MonoBehaviour
         Collectable.CollectableCollected += Collectable_CollectableCollected;
     }
 
+    void OnDisable()
+    {
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
+        Collectable.CollectableCollected -= Collectable_CollectableCollected;
+    }
+
     private void Collectable_CollectableCollected(object sender, EventArgs e)
     {
         Berries++;
@@ -192,9 +198,9 @@ public class Bird : MonoBehaviour
         // If collected enough berries to boost
         if (Berries >= BerriesRequiredToBoost)
         {
-            if (BoostState == BoostState.Off)
+            if (BoostState == BoostState.Cancelled)
             {
-                BoostState = BoostState.On;
+                BoostState = BoostState.Ignition;
                 StartCoroutine(EnableBoostWindow());
             }
         }
@@ -209,12 +215,7 @@ public class Bird : MonoBehaviour
         CanBoost = false;
 
         Berries = 0;
-    }
-
-    void OnDisable()
-    {
-        GameManager.GameStateChanged -= GameManager_GameStateChanged;
-        Collectable.CollectableCollected -= Collectable_CollectableCollected;
+        BoostState = BoostState.Cancelled;
     }
 
     private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
@@ -324,7 +325,7 @@ public class Bird : MonoBehaviour
     {
         forceApplied = true;
 
-        //BoostState = BoostState.On;
+        BoostState = BoostState.Boosting;
         AnimationState = AnimationState.Glide;          // Change to glide animation
         Radius = BoostRadius;                           // Increase collection radius
         BoostBar.SetBoostColor();                       // Change bar color
@@ -338,7 +339,7 @@ public class Bird : MonoBehaviour
     {
         forceApplied = false;
 
-        BoostState = BoostState.Off;
+        BoostState = BoostState.Cancelled;
         AnimationState = AnimationState.Fly;    // Change to fly animation
         Radius = _OriginalRadius;               // Revert collection radius
         BoostParticles.Stop();                  // Stop boost particles

@@ -10,7 +10,6 @@ public class ArduinoUI : MonoBehaviour
 {
     public static ArduinoUI Instance { get; private set; }
 
-
     [Header("Labels")]
     public Text FruitLabel;
     public Text OutputLabel;
@@ -99,7 +98,7 @@ public class ArduinoUI : MonoBehaviour
                 BoostBar.ResetColor();
                 break;
             case AnimationState.Glide:
-                ClearMessage();
+                //ClearMessage();
                 break;
         }
     }
@@ -108,11 +107,14 @@ public class ArduinoUI : MonoBehaviour
     {
         switch (e.BoostState)
         {
-            case BoostState.On:
-                UpdateMessage("Energy Up!\nPull band to boost!");
+            case BoostState.Ignition:
+                UpdateMessage("Energy Up!\nPull band to boost!", 5);
                 break;
-            case BoostState.Off:
-                ClearMessage();
+            case BoostState.Boosting:
+                UpdateMessage("Good Job!", 1);
+                break;
+            case BoostState.Cancelled:
+                //UpdateMessage();
                 break;
         }
     }
@@ -139,11 +141,10 @@ public class ArduinoUI : MonoBehaviour
             case GameState.Pregame:
                 UpdateTimer(e.GameDuration);
                 UpdateMessage(PregameMessage);
-                UpdateFruits(0);
                 _DistanceToTravel = e.DistanceToTravel;
                 break;
             case GameState.Playing:
-                ClearMessage();
+                UpdateMessage("Fly home!", 1);
                 break;
             case GameState.End:
                 UpdateMessage(PostgameMessage);
@@ -225,7 +226,7 @@ public class ArduinoUI : MonoBehaviour
         }
     }
 
-    public void UpdateMessage(string msg)
+    public void UpdateMessage(string msg = "", float duration = 0)
     {
         MessageLabel.text = msg;
 
@@ -234,17 +235,26 @@ public class ArduinoUI : MonoBehaviour
             SetAnimation(CanvasAnimationState.HideMessage);
         }
         else
-            SetAnimation(CanvasAnimationState.ShowMessage);
+        {
+            if(duration > 0)
+                StartCoroutine(RunUpdateMessage(msg, duration));
+            else
+                SetAnimation(CanvasAnimationState.ShowMessage);
+        }
+    }
+
+    IEnumerator RunUpdateMessage(string msg, float duration)
+    {
+        SetAnimation(CanvasAnimationState.ShowMessage);
+
+        yield return new WaitForSeconds(duration);
+
+        SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     public void UpdateFruits(int value)
     {
         FruitLabel.text = string.Format("{0}", value);
-    }
-
-    public void ClearMessage()
-    {
-        SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     void UpdatePortDropdown()
