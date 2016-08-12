@@ -339,6 +339,8 @@ public class Bird : MonoBehaviour
     {
         forceApplied = false;
 
+        CancelInvoke();
+
         BoostState = BoostState.Cancelled;
         AnimationState = AnimationState.Fly;    // Change to fly animation
         Radius = _OriginalRadius;               // Revert collection radius

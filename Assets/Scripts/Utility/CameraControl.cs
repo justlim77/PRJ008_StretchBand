@@ -22,13 +22,15 @@ public class CameraControl : MonoBehaviour
     {
         get
         {
-            if (_picturesFolderPath == "")
+            if (string.IsNullOrEmpty(_picturesFolderPath))
             {
+
                 _picturesFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), screenshotFolderName);
                 if (!Directory.Exists(_picturesFolderPath))
                 {
                     Directory.CreateDirectory(_picturesFolderPath);
                 }
+
             }
             return _picturesFolderPath;
         }

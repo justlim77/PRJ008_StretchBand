@@ -20,6 +20,7 @@ public class ArduinoUI : MonoBehaviour
 
     [Header("Sliders")]
     public Slider DistanceSlider;
+    public DistanceSlider CustomDistanceSlider;
 
     public BoostBar BoostBar;
 
@@ -142,12 +143,15 @@ public class ArduinoUI : MonoBehaviour
                 UpdateTimer(e.GameDuration);
                 UpdateMessage(PregameMessage);
                 _DistanceToTravel = e.DistanceToTravel;
+                CustomDistanceSlider.Fade(FadeType.Out);
                 break;
             case GameState.Playing:
                 UpdateMessage("Fly home!", 1);
+                CustomDistanceSlider.Fade(FadeType.In);
                 break;
             case GameState.End:
                 UpdateMessage(PostgameMessage);
+                CustomDistanceSlider.Fade(FadeType.Out);
                 break;
         }
     }

@@ -6,3 +6,9 @@ public static class Constants
     public static readonly float collectable_shrink_speed = 5.0f;
 
 }
+
+public enum FadeType
+{
+    In,
+    Out
+}

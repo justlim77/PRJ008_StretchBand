@@ -43,7 +43,6 @@ public class GameManager : MonoBehaviour
     [Header("Bird")]
     public Bird Bird;
     public BirdHouse BirdHouse;
-    public float BoostWindow = 5.0f;
 
     int _BoostBerries;
     public int TotalBerries
