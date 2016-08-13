@@ -194,10 +194,10 @@ public class KinectManager : MonoBehaviour
 	protected bool kinectReaderRunning = false;
 
 
-	/// <summary>
-	/// Gets the single KinectManager instance.
-	/// </summary>
-	/// <value>The KinectManager instance.</value>
+    /// <summary>
+    /// Gets the single KinectManager instance.
+    /// </summary>
+    /// <value>The KinectManager instance.</value>
     public static KinectManager Instance
     {
         get
@@ -206,11 +206,11 @@ public class KinectManager : MonoBehaviour
         }
     }
 
-	/// <summary>
-	/// Determines if the sensor and KinectManager-component are initialized and ready to use.
-	/// </summary>
-	/// <returns><c>true</c> if Kinect is initialized; otherwise, <c>false</c>.</returns>
-	public static bool IsKinectInitialized()
+    /// <summary>
+    /// Determines if the sensor and KinectManager-component are initialized and ready to use.
+    /// </summary>
+    /// <returns><c>true</c> if Kinect is initialized; otherwise, <c>false</c>.</returns>
+    public static bool IsKinectInitialized()
 	{
 		return instance != null ? instance.kinectInitialized : false;
 	}

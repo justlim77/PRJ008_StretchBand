@@ -77,8 +77,20 @@ public class InteractionManager : MonoBehaviour
     [Tooltip("Calibration text prefab")]
     public GameObject calibrationPrefab;
 
-    [Tooltip("Canvas Scaler for progress bar positioning")]
-    public CanvasScaler canvasScaler;
+    //[Tooltip("Canvas Scaler for progress bar positioning")]
+    CanvasScaler _canvasScaler;
+    CanvasScaler canvasScaler
+    {
+        get
+        {
+            if (_canvasScaler == null)
+            {
+                _canvasScaler = FindObjectOfType<Canvas>().GetComponent<CanvasScaler>();
+            }
+
+            return _canvasScaler;
+        }
+    }
 
     [Tooltip("Smooth factor for cursor movement.")]
     public float smoothFactor = 10f;
@@ -150,7 +162,7 @@ public class InteractionManager : MonoBehaviour
     // Bool to keep track whether Kinect and Interaction library have been initialized
     private bool interactionInited = false;
 
-    // The single instance of FacetrackingManager
+    //The single instance of FacetrackingManager
     private static InteractionManager instance;
 
     private Image _ProgressBar;
@@ -208,24 +220,30 @@ public class InteractionManager : MonoBehaviour
             _CalibrationText = value;
         }
     }
-	
-	/// <summary>
-	/// Gets the single InteractionManager instance.
-	/// </summary>
-	/// <value>The InteractionManager instance.</value>
+
+    /// <summary>
+    /// Gets the single InteractionManager instance.
+    /// </summary>
+    /// <value>The InteractionManager instance.</value>
     public static InteractionManager Instance
     {
         get
         {
+            if (instance == null)
+            {
+                Debug.LogWarning("No instance of InteractionManager found!");
+                Debug.LogWarning("Attempting to fetching reference from KinectManager!");
+                instance = KinectManager.Instance.GetComponent<InteractionManager>();
+            }
             return instance;
         }
     }
-	
-	/// <summary>
-	/// Determines whether the InteractionManager was successfully initialized.
-	/// </summary>
-	/// <returns><c>true</c> if InteractionManager was successfully initialized; otherwise, <c>false</c>.</returns>
-	public bool IsInteractionInited()
+
+    /// <summary>
+    /// Determines whether the InteractionManager was successfully initialized.
+    /// </summary>
+    /// <returns><c>true</c> if InteractionManager was successfully initialized; otherwise, <c>false</c>.</returns>
+    public bool IsInteractionInited()
 	{
 		return interactionInited;
 	}
@@ -433,7 +451,7 @@ public class InteractionManager : MonoBehaviour
 		if(interactionInited)
 		{
 			interactionInited = false;
-			instance = null;
+			//Instance = null;
 		}
 	}
 	

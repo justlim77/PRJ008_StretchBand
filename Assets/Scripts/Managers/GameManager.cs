@@ -22,9 +22,10 @@ public class TimerChangedEventArgs : EventArgs
     public float Time;
 }
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    public static GameManager Instance { get; private set; }
+    protected GameManager() { }
+
     public static int BerriesRequiredToBoost = 10;
 
     #region Events and Delegates
@@ -50,19 +51,19 @@ public class GameManager : MonoBehaviour
 
     public float ElapsedTime { get; private set; }
 
-    void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-    }
+    //void Awake()
+    //{
+    //    if (Instance == null)
+    //        Instance = this;
+    //}
 
     void Start()
     {
         Application.targetFrameRate = 60;
 
-        InteractionManager manager = InteractionManager.Instance;
-        manager.controlMouseCursor = false;
-        manager.allowHandClicks = false;
+        //InteractionManager manager = InteractionManager.Instance;
+        //manager.controlMouseCursor = false;
+        //manager.allowHandClicks = false;
 
         SetState(GameState.Pregame);
     }
@@ -84,7 +85,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    bool updateStats = false;
     bool timerStart = false;
     void Update()
     {
@@ -104,12 +104,7 @@ public class GameManager : MonoBehaviour
             ElapsedTime -= Time.deltaTime;
             ElapsedTime = Mathf.Clamp(ElapsedTime, 0.0f, GameDuration);
             OnTimerChanged();
-        }
-
-        if (updateStats)
-        {
-            UpdateStats();
-        }     
+        }    
     }
 
     public void OnGameStateChanged(GameState state)
@@ -133,12 +128,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdateStats()
-    {
-        //ArduinoUI.Instance.UpdateDistance(Bird.Distance);
-        //ArduinoUI.Instance.UpdateTimer(ElapsedTime);
-    }
-
     public void SetState(GameState state)
     {
         if (GameState == state)
@@ -151,18 +140,14 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Pregame:
                 ResetTimer();
-                updateStats = false;
-                UpdateStats();
                 BirdHouse.Distance = DistanceToTravel + Bird.LandingForwardBuffer;
                 break;
             case GameState.Playing:
                 StartTimer();
                 Bird.SetInMotion(true);
-                updateStats = true;
                 break;
             case GameState.End:
                 StopTimer();
-                updateStats = false;
                 break;
         }
     }

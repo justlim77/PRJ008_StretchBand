@@ -61,6 +61,7 @@ public class Bird : MonoBehaviour
     [Header("Boost")]
     public int ForceThreshold = 10;
     public float BoostTime = 5.0f;
+    public float BoostWindow = 10.0f;
     public float BoostMultiplier = 2.0f;
     public KeyCode BoostKey = KeyCode.Space;
     public ParticleSystem BoostParticles;
@@ -210,7 +211,7 @@ public class Bird : MonoBehaviour
     {
         CanBoost = true;
 
-        yield return new WaitForSeconds(BoostTime);
+        yield return new WaitForSeconds(BoostWindow);
 
         CanBoost = false;
 
