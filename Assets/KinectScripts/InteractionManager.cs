@@ -232,8 +232,9 @@ public class InteractionManager : MonoBehaviour
             if (instance == null)
             {
                 Debug.LogWarning("No instance of InteractionManager found!");
-                Debug.LogWarning("Attempting to fetching reference from KinectManager!");
-                instance = KinectManager.Instance.GetComponent<InteractionManager>();
+                Debug.LogWarning("Attempting to fetch reference from KinectManager!");
+                if(KinectManager.Instance)
+                    instance = KinectManager.Instance.GetComponent<InteractionManager>();
             }
             return instance;
         }
@@ -417,12 +418,15 @@ public class InteractionManager : MonoBehaviour
 	}
 
 
-	//----------------------------------- end of public functions --------------------------------------//
-
+    //----------------------------------- end of public functions --------------------------------------//
+    void Awake()
+    {
+        instance = this;
+    }
 
 	void Start() 
 	{
-		instance = this;
+		//instance = this;
 		interactionInited = true;
 
 		// try to automatically detect the available gesture listeners in the scene

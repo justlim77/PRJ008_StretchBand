@@ -13,11 +13,21 @@ public class Loader : MonoBehaviour
     public bool controlMouseCursor = false;
     public bool controlMouseDrag = false;
 
+    [Header("Play Background Music")]
+    public bool playBGM = true;
+    public AudioClip bgmClip;
+
     // Use this for initialization
     void Awake ()
     {
         InitializeManagers();
-	}
+
+        if (playBGM)
+        {
+            AudioManager.Instance.PlayBGM(bgmClip);
+        }
+
+    }
 	
 	bool InitializeManagers()
     {
@@ -36,14 +46,14 @@ public class Loader : MonoBehaviour
             DontDestroyOnLoad(kinectManager);
 
             InteractionManager interactionManager = InteractionManager.Instance;
-            interactionManager.showHandCursor = showHandCursor;
-            interactionManager.allowHandClicks = allowHandClicks;
-            interactionManager.controlMouseCursor = controlMouseCursor;
-            interactionManager.controlMouseDrag = controlMouseDrag;
-            //kinectManager.AddComponent<InteractionManager>();
-            //kinectManager.AddComponent<InteractionListener>();
-            //kinectManager.AddComponent<KinectGestures>();
-            //kinectManager.AddComponent<FlightGestureListener>();
+            if (interactionManager != null)
+            {
+                interactionManager.showHandCursor = showHandCursor;
+                interactionManager.allowHandClicks = allowHandClicks;
+                interactionManager.controlMouseCursor = controlMouseCursor;
+                interactionManager.controlMouseDrag = controlMouseDrag;
+
+            }
         }
 
         //if (InteractionManager.Instance == null)

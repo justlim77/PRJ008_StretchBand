@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using DG.Tweening;
 
 public enum AnimationState
 {
@@ -103,24 +104,24 @@ public class Bird : MonoBehaviour
         get { return transform.position.z; }
     }
 
-    SphereCollider _Collider;
-    float _OriginalRadius;
-    public float Radius
+    SphereCollider _collider;
+    float _originalRadius;
+    public float radus
     {
-        get { return _Collider.radius; }
-        set { _Collider.radius = value; }
+        get { return _collider.radius; }
+        set { _collider.radius = value; }
     }
 
-    BoostState _BoostState = BoostState.Cancelled;
-    BoostState BoostState
+    BoostState _boostState = BoostState.Cancelled;
+    BoostState boostState
     {
         get
         {
-            return _BoostState;
+            return _boostState;
         }
         set
         {
-            _BoostState = value;
+            _boostState = value;
             OnBoostStateChanged();
         }
     }
@@ -131,30 +132,30 @@ public class Bird : MonoBehaviour
     Rigidbody _Rigidbody;
     ArduinoController _ArduinoController;
 
-    int _TotalBerries = 0;
-    public int TotalBerries
+    int _totalBerries = 0;
+    public int totalBerries
     {
         get
         {
-            return _TotalBerries;
+            return _totalBerries;
         }
         set
         {
-            _TotalBerries = value;
+            _totalBerries = value;
             OnFruitAmountChanged();
         }
     }
 
-    int _BoostBerries = 0;
-    public int Berries
+    int _boostBerries = 0;
+    public int boostBerries
     {
         get
         {
-            return _BoostBerries;
+            return _boostBerries;
         }
         set
         {
-            _BoostBerries = value;
+            _boostBerries = value;
             OnFruitAmountChanged();
         }
     }
@@ -163,10 +164,10 @@ public class Bird : MonoBehaviour
     {
         _Animator = GetComponentInChildren<Animator>();
         _Rigidbody = GetComponent<Rigidbody>();
-        _Collider = GetComponent<SphereCollider>();
+        _collider = GetComponent<SphereCollider>();
 
         _OriginalPosition = transform.position;
-        _OriginalRadius = _Collider.radius;
+        _originalRadius = _collider.radius;
     }
 
 	// Use this for initialization
@@ -193,15 +194,15 @@ public class Bird : MonoBehaviour
 
     private void Collectable_CollectableCollected(object sender, EventArgs e)
     {
-        Berries++;
-        TotalBerries++;
+        boostBerries++;
+        totalBerries++;
 
         // If collected enough berries to boost
-        if (Berries >= BerriesRequiredToBoost)
+        if (boostBerries >= BerriesRequiredToBoost)
         {
-            if (BoostState == BoostState.Cancelled)
+            if (boostState == BoostState.Cancelled)
             {
-                BoostState = BoostState.Ignition;
+                boostState = BoostState.Ignition;
                 StartCoroutine(EnableBoostWindow());
             }
         }
@@ -215,8 +216,8 @@ public class Bird : MonoBehaviour
 
         CanBoost = false;
 
-        Berries = 0;
-        BoostState = BoostState.Cancelled;
+        boostBerries = 0;
+        boostState = BoostState.Cancelled;
     }
 
     private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
@@ -227,6 +228,7 @@ public class Bird : MonoBehaviour
                 Initialize();
                 break;
             case GameState.Playing:
+                SetInMotion(true);
                 _CanMove = true;
                 break;
             case GameState.End:
@@ -240,8 +242,8 @@ public class Bird : MonoBehaviour
     {
         CancelInvoke();
         AnimationState = AnimationState.Idle;
-        TotalBerries = 0;
-        Berries = 0;
+        totalBerries = 0;
+        boostBerries = 0;
         BoostBar.Reset();
         BoostParticles.Stop();
         CanBoost = false;
@@ -326,9 +328,9 @@ public class Bird : MonoBehaviour
     {
         forceApplied = true;
 
-        BoostState = BoostState.Boosting;
+        boostState = BoostState.Boosting;
         AnimationState = AnimationState.Glide;          // Change to glide animation
-        Radius = BoostRadius;                           // Increase collection radius
+        radus = BoostRadius;                           // Increase collection radius
         BoostBar.SetBoostColor();                       // Change bar color
         BoostParticles.Play();                          // Play boost particles
         _Force *= BoostMultiplier;                      // Multiply forward force
@@ -342,11 +344,11 @@ public class Bird : MonoBehaviour
 
         CancelInvoke();
 
-        BoostState = BoostState.Cancelled;
+        boostState = BoostState.Cancelled;
         AnimationState = AnimationState.Fly;    // Change to fly animation
-        Radius = _OriginalRadius;               // Revert collection radius
+        radus = _originalRadius;               // Revert collection radius
         BoostParticles.Stop();                  // Stop boost particles
-        Berries = 0;                            // Reset boost berry bar
+        boostBerries = 0;                            // Reset boost berry bar
         _Force = MovementForce;                 // Revert forward force
     }
 
@@ -355,6 +357,7 @@ public class Bird : MonoBehaviour
         takeoff = true;
 
         AnimationState = AnimationState.Takeoff;   // Set animation to takeoff state
+        //transform.DOTween 
         do
         {
             transform.position = Vector3.MoveTowards(this.transform.position, Center, TakeoffSpeed * Time.deltaTime);
@@ -372,7 +375,7 @@ public class Bird : MonoBehaviour
 
         CancelBoost();
 
-        Vector3 targetPos = GameManager.Instance.BirdHouse.LandingPosition;
+        Vector3 targetPos = BirdHouse.Instance.LandingPosition;
         do
         {            
             transform.LookAt(targetPos);
@@ -381,7 +384,7 @@ public class Bird : MonoBehaviour
         } while (Vector3.Distance(transform.position, targetPos) != 0f);
         AnimationState = AnimationState.Landing;
         transform.rotation = Quaternion.identity;
-
+        GameManager.Instance.SetState(GameState.Postgame);
         //takeoff = false;
     }
 
@@ -417,7 +420,7 @@ public class Bird : MonoBehaviour
     {
         if (FruitAmountChanged != null)
         {
-            FruitAmountChanged(this, new FruitAmountChangedEventArgs() { BoostBerries = Berries, TotalBerries = TotalBerries });
+            FruitAmountChanged(this, new FruitAmountChangedEventArgs() { BoostBerries = boostBerries, TotalBerries = totalBerries });
         }
     }
 
@@ -433,7 +436,7 @@ public class Bird : MonoBehaviour
     {
         if (BoostStateChanged != null)
         {
-            BoostStateChanged(this, new BoostStateChangedEventArgs() { BoostState = BoostState });
+            BoostStateChanged(this, new BoostStateChangedEventArgs() { BoostState = boostState });
         }
     }
 

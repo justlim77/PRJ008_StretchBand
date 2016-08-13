@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.IO;
+using DG.Tweening;
 
 public class CameraControl : MonoBehaviour
 {
@@ -59,9 +60,13 @@ public class CameraControl : MonoBehaviour
         {
             case BoostState.Boosting:
                 _targetFOV = boostFOV;
+                //Camera.main.DOShakePosition(5, 0.1f, 1, 5);
+                Camera.main.DOFieldOfView(boostFOV, 1);
                 break;
             case BoostState.Cancelled:
                 _targetFOV = _initialFOV;
+                //Camera.main.DOKill();
+                Camera.main.DOFieldOfView(_initialFOV, 1);
                 break;
         }
     }
@@ -70,10 +75,10 @@ public class CameraControl : MonoBehaviour
 	void Update ()
     {
         // FOV
-        if (Camera.main.fieldOfView != _targetFOV)
-        {
-            Camera.main.fieldOfView = Mathf.SmoothStep(Camera.main.fieldOfView, _targetFOV, smoothTime * Time.deltaTime);
-        }
+        //if (Camera.main.fieldOfView != _targetFOV)
+        //{
+        //    Camera.main.fieldOfView = Mathf.SmoothStep(Camera.main.fieldOfView, _targetFOV, smoothTime * Time.deltaTime);
+        //}
 
         // Screenshot
         if (Input.GetKeyDown(captureScreenshotKey))

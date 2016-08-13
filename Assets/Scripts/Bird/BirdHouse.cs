@@ -5,10 +5,32 @@ public class BirdHouse : MonoBehaviour
 {
     [SerializeField] Transform _LandingSpot;
 
-    // Use this for initialization
-    void Start()
-    {
+    public static BirdHouse Instance { get; private set; }
 
+    void OnEnable()
+    {
+        GameManager.GameStateChanged += GameManager_GameStateChanged;
+    }
+
+    void OnDisable()
+    {
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
+    }
+
+    void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        Instance = null;
+    }
+
+    private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
+    {
+        Distance = e.DistanceToTravel + e.LandingForwardBuffer;
     }
 
     public Vector3 LandingPosition

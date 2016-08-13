@@ -29,6 +29,11 @@ public class BoostBar : MonoBehaviour
     public void ShowBar(bool value)
     {
         float fadeTo = value ? 1 : 0;
+        float initialAlpha = value ? 0 : 1;
+
+        EmptyBar.canvasRenderer.SetAlpha(initialAlpha);
+        ProgressBar.canvasRenderer.SetAlpha(initialAlpha);
+
         EmptyBar.CrossFadeAlpha(fadeTo, FadeDuration, true);
         ProgressBar.CrossFadeAlpha(fadeTo, FadeDuration, true);
     }

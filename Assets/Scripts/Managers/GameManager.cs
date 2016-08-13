@@ -7,14 +7,19 @@ public enum GameState
     None,
     Pregame,
     Playing,
-    End
+    End,
+    Postgame
 }
 
 public class GameStateChangedEventArgs : EventArgs
 {
     public GameState GameState;
     public float DistanceToTravel;
+    public float LandingForwardBuffer;
     public float GameDuration;
+    public int BoostCount;
+    public int BerriesCollected;
+    public float TimeTaken;
 }
 
 public class TimerChangedEventArgs : EventArgs
@@ -40,16 +45,13 @@ public class GameManager : Singleton<GameManager>
     public GameState GameState;
     public float GameDuration = 60.0f;
     public float DistanceToTravel = 100.0f;
+    public float LandingForwardBuffer = 5.0f;
 
-    [Header("Bird")]
-    public Bird Bird;
-    public BirdHouse BirdHouse;
-
-    int _BoostBerries;
-    public int TotalBerries
-    { get; private set; }
-
-    public float ElapsedTime { get; private set; }
+    int boostBerries;
+    int totalBerries { get; set; }
+    int boostCount  { get; set; }
+    float elapsedTime { get; set; }
+    float timeTaken { get; set; }
 
     //void Awake()
     //{
@@ -61,20 +63,36 @@ public class GameManager : Singleton<GameManager>
     {
         Application.targetFrameRate = 60;
 
-        //InteractionManager manager = InteractionManager.Instance;
-        //manager.controlMouseCursor = false;
-        //manager.allowHandClicks = false;
-
         SetState(GameState.Pregame);
     }
 
     void OnEnable()
     {
         Bird.DistanceChanged += Bird_DistanceChanged;
+        Bird.FruitAmountChanged += Bird_FruitAmountChanged;
+        Bird.BoostStateChanged += Bird_BoostStateChanged;
     }
+
+    private void Bird_FruitAmountChanged(object sender, FruitAmountChangedEventArgs e)
+    {
+        totalBerries = e.TotalBerries;
+    }
+
     void OnDisable()
     {
+        Bird.BoostStateChanged -= Bird_BoostStateChanged;
         Bird.DistanceChanged -= Bird_DistanceChanged;
+        Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
+    }
+
+    private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
+    {
+        switch (e.BoostState)
+        {
+            case BoostState.Boosting:
+                boostCount++;
+                break;
+        }
     }
 
     private void Bird_DistanceChanged(object sender, float distance)
@@ -88,11 +106,6 @@ public class GameManager : Singleton<GameManager>
     bool timerStart = false;
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    SetState(GameState.Playing);
-        //}
-
         if (Input.GetKeyDown(KeyCode.R))
         {
             SetState(GameState.Pregame);
@@ -101,8 +114,9 @@ public class GameManager : Singleton<GameManager>
         if (timerStart)
         {
             //ElapsedTime = Time.time - startTime;
-            ElapsedTime -= Time.deltaTime;
-            ElapsedTime = Mathf.Clamp(ElapsedTime, 0.0f, GameDuration);
+            elapsedTime -= Time.deltaTime;
+            elapsedTime = Mathf.Clamp(elapsedTime, 0.0f, GameDuration);
+            timeTaken += Time.deltaTime;
             OnTimerChanged();
         }    
     }
@@ -115,7 +129,11 @@ public class GameManager : Singleton<GameManager>
             {
                 GameState = GameState,
                 GameDuration = GameDuration,
-                DistanceToTravel = DistanceToTravel
+                DistanceToTravel = DistanceToTravel,
+                LandingForwardBuffer = LandingForwardBuffer,
+                BoostCount = boostCount,
+                BerriesCollected = totalBerries,
+                TimeTaken = timeTaken
             });
         }
     }
@@ -124,7 +142,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (TimerChanged != null)
         {
-            TimerChanged(this, new TimerChangedEventArgs() { Time = ElapsedTime });
+            TimerChanged(this, new TimerChangedEventArgs() { Time = elapsedTime });
         }
     }
 
@@ -139,12 +157,10 @@ public class GameManager : Singleton<GameManager>
         switch (state)
         {
             case GameState.Pregame:
-                ResetTimer();
-                BirdHouse.Distance = DistanceToTravel + Bird.LandingForwardBuffer;
+                Initialize();
                 break;
             case GameState.Playing:
                 StartTimer();
-                Bird.SetInMotion(true);
                 break;
             case GameState.End:
                 StopTimer();
@@ -162,11 +178,22 @@ public class GameManager : Singleton<GameManager>
     void ResetTimer()
     {
         timerStart = false;
-        ElapsedTime = GameDuration;
+        elapsedTime = GameDuration;
+        timeTaken = 0;
     }
 
     void StopTimer()
     {
         timerStart = false;
+    }
+
+    bool Initialize()
+    {
+        StopTimer();
+        ResetTimer();
+        boostCount = 0;
+        boostBerries = 0;
+        totalBerries = 0;
+        return true;
     }
 }
