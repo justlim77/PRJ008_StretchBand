@@ -49,7 +49,9 @@ public class Bird : MonoBehaviour
     public Vector3 GuidedForce;
 
     public float TakeoffSpeed = 3.0f;
+    public Ease takeOffEaseType = Ease.InSine;
     public float LandingSpeed = 3.0f;
+    public Ease landingEaseType = Ease.OutBounce;
     public float LandingForwardBuffer = 5.0f;
     [SerializeField] float _GroundHeight = 0.5f;
 
@@ -65,9 +67,8 @@ public class Bird : MonoBehaviour
     public float BoostWindow = 10.0f;
     public float BoostMultiplier = 2.0f;
     public KeyCode BoostKey = KeyCode.Space;
-    public ParticleSystem BoostParticles;
+    public ParticleSystem boostParticles;
     public float BoostRadius = 5.0f;
-    public BoostBar BoostBar;
     public bool CanBoost { get; set; }
 
     #region Events and Delegates
@@ -106,7 +107,7 @@ public class Bird : MonoBehaviour
 
     SphereCollider _collider;
     float _originalRadius;
-    public float radus
+    public float radius
     {
         get { return _collider.radius; }
         set { _collider.radius = value; }
@@ -127,7 +128,7 @@ public class Bird : MonoBehaviour
     }
 
     Animator _Animator;
-    Vector3 _Force;
+    Vector3 _force;
     Vector3 _OriginalPosition;
     Rigidbody _Rigidbody;
     ArduinoController _ArduinoController;
@@ -194,7 +195,9 @@ public class Bird : MonoBehaviour
 
     private void Collectable_CollectableCollected(object sender, EventArgs e)
     {
-        boostBerries++;
+        if(boostBerries < BerriesRequiredToBoost)
+            boostBerries++;
+
         totalBerries++;
 
         // If collected enough berries to boost
@@ -215,7 +218,6 @@ public class Bird : MonoBehaviour
         yield return new WaitForSeconds(BoostWindow);
 
         CanBoost = false;
-
         boostBerries = 0;
         boostState = BoostState.Cancelled;
     }
@@ -241,11 +243,12 @@ public class Bird : MonoBehaviour
     public void Initialize()
     {
         CancelInvoke();
-        AnimationState = AnimationState.Idle;
+        StopAllCoroutines();
+        ResetAnimationTriggers();
+        animationState = AnimationState.Idle;
         totalBerries = 0;
         boostBerries = 0;
-        BoostBar.Reset();
-        BoostParticles.Stop();
+        boostParticles.Stop();
         CanBoost = false;
         _CanMove = false;
         takeoff = false;
@@ -256,7 +259,7 @@ public class Bird : MonoBehaviour
 
     public void SetInMotion(bool value)
     {
-        _Force = value ? MovementForce * 1 : Vector3.zero;
+        _force = value ? MovementForce * 1 : Vector3.zero;
     }
 
     // Update is called once per frame
@@ -316,7 +319,7 @@ public class Bird : MonoBehaviour
         Vector3 targetPos = Vector3.Lerp(_Rigidbody.position, GuidedForce, 3 * Time.deltaTime);
         _Rigidbody.position = targetPos;
 
-        _Rigidbody.MovePosition(_Rigidbody.position + _Force * Time.deltaTime);
+        _Rigidbody.MovePosition(_Rigidbody.position + _force * Time.deltaTime);
     }
 
     bool BoostDetected()
@@ -327,13 +330,12 @@ public class Bird : MonoBehaviour
     void Boost()
     {
         forceApplied = true;
-
-        boostState = BoostState.Boosting;
-        AnimationState = AnimationState.Glide;          // Change to glide animation
-        radus = BoostRadius;                           // Increase collection radius
-        BoostBar.SetBoostColor();                       // Change bar color
-        BoostParticles.Play();                          // Play boost particles
-        _Force *= BoostMultiplier;                      // Multiply forward force
+        StopAllCoroutines();     // Ensure countdown is stopped
+        boostState = BoostState.Boosting;       // Change boost state to Boosting
+        animationState = AnimationState.Glide;  // Change to glide animation
+        radius = BoostRadius;                   // Increase collection radius
+        boostParticles.Play();                  // Play boost particles
+        _force *= BoostMultiplier;              // Multiply forward force
 
         Invoke("CancelBoost", BoostTime);
     }
@@ -341,30 +343,31 @@ public class Bird : MonoBehaviour
     void CancelBoost()
     {
         forceApplied = false;
-
-        CancelInvoke();
-
-        boostState = BoostState.Cancelled;
-        AnimationState = AnimationState.Fly;    // Change to fly animation
-        radus = _originalRadius;               // Revert collection radius
-        BoostParticles.Stop();                  // Stop boost particles
-        boostBerries = 0;                            // Reset boost berry bar
-        _Force = MovementForce;                 // Revert forward force
+        CanBoost = false;
+        boostBerries = 0;                       // Reset boost berry bar
+        //CancelInvoke();                         // Cancel all invokes
+        boostState = BoostState.Cancelled;      // Change boost state to Cancelled
+        animationState = AnimationState.Fly;    // Change to fly animation
+        radius = _originalRadius;               // Revert collection radius
+        boostParticles.Stop();                  // Stop boost particles
+        _force = MovementForce;                 // Revert forward force
     }
 
     IEnumerator TakeOff()
     {
         takeoff = true;
 
-        AnimationState = AnimationState.Takeoff;   // Set animation to takeoff state
-        //transform.DOTween 
+        animationState = AnimationState.Takeoff;   // Set animation to takeoff state
+        transform.DOMove(Center, TakeoffSpeed).SetEase(takeOffEaseType);
         do
         {
-            transform.position = Vector3.MoveTowards(this.transform.position, Center, TakeoffSpeed * Time.deltaTime);
+            //transform.position = Vector3.MoveTowards(this.transform.position, Center, TakeoffSpeed * Time.deltaTime);
             yield return new WaitForFixedUpdate();
         } while (Vector3.Distance(transform.position, Center) != 0f);
 
-        GameManager.Instance.SetState(GameState.Playing);   // Set 
+        GameManager instance = GameManager.Instance;
+        if(instance)
+            instance.SetState(GameState.Playing);   // Set 
         forceApplied = false;   // Enable boosting
     }
 
@@ -376,13 +379,16 @@ public class Bird : MonoBehaviour
         CancelBoost();
 
         Vector3 targetPos = BirdHouse.Instance.LandingPosition;
+        transform.DOLookAt(targetPos, LandingSpeed);
+        transform.DOMove(targetPos, LandingSpeed).SetEase(landingEaseType);
         do
         {            
-            transform.LookAt(targetPos);
-            transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
+            //transform.LookAt(targetPos);
+            //transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
             yield return new WaitForFixedUpdate();
-        } while (Vector3.Distance(transform.position, targetPos) != 0f);
-        AnimationState = AnimationState.Landing;
+            Debug.Log(Vector3.Distance(transform.position, targetPos));
+        } while (Vector3.Distance(transform.position, targetPos) > 0.01f);
+        animationState = AnimationState.Landing;
         transform.rotation = Quaternion.identity;
         GameManager.Instance.SetState(GameState.Postgame);
         //takeoff = false;
@@ -394,7 +400,7 @@ public class Bird : MonoBehaviour
     }
 
     AnimationState _AnimationState;
-    public AnimationState AnimationState
+    public AnimationState animationState
     {
         get { return _AnimationState; }
         set {
@@ -402,6 +408,21 @@ public class Bird : MonoBehaviour
             string trigger = value.ToString().ToLower();
             _Animator.SetTrigger(trigger);
             OnAnimationStateChanged();
+        }
+    }
+
+    public void ResetAnimationTriggers()
+    {
+        AnimatorControllerParameter param;
+        for (int i = 0; i < _Animator.parameters.Length; i++)
+        {
+            param = _Animator.parameters[i];
+            Debug.Log("Parameter name: " + param.name);
+
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                _Animator.ResetTrigger(param.nameHash);
+            }
         }
     }
 

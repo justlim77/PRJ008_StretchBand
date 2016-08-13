@@ -4,7 +4,17 @@ using System.Collections;
 
 public class BoostBar : MonoBehaviour
 {
-    public Image EmptyBar;
+    Image _image;
+    Image image
+    {
+        get
+        {
+            if (_image == null)
+                _image = GetComponent<Image>();
+            return _image;
+        }
+    }
+
     public Image ProgressBar;
     public Color BoostColor;
     public float LerpSpeed = 2.0f;
@@ -12,6 +22,51 @@ public class BoostBar : MonoBehaviour
 
     float _TargetProgress = 0.0f;
     Color _OriginalColor;
+
+    void OnEnable()
+    {
+        Bird.AnimationStateChanged += Bird_AnimationStateChanged;
+        Bird.BoostStateChanged += Bird_BoostStateChanged;
+    }
+
+    private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
+    {
+        switch (e.BoostState)
+        {
+            case BoostState.Boosting:
+                ShowBar(false);
+                break;
+            case BoostState.Cancelled:
+                ShowBar(true);
+                break;
+        }
+    }
+
+    void OnDisable()
+    {
+        Bird.AnimationStateChanged -= Bird_AnimationStateChanged;
+        Bird.BoostStateChanged -= Bird_BoostStateChanged;
+    }
+
+    private void Bird_AnimationStateChanged(object sender, AnimationStateChangedEventArgs e)
+    {
+        switch (e.AnimationState)
+        {
+            case AnimationState.Idle:
+                Reset();
+                break;
+            case AnimationState.Takeoff:
+                ShowBar(true);
+                break;
+            case AnimationState.Landing:
+                ResetColor();      // Revert bar color
+                ShowBar(false);    // Hide bar
+                break;
+            case AnimationState.Fly:
+                ResetColor();
+                break;
+        }
+    }
 
     void Start()
     {
@@ -31,10 +86,10 @@ public class BoostBar : MonoBehaviour
         float fadeTo = value ? 1 : 0;
         float initialAlpha = value ? 0 : 1;
 
-        EmptyBar.canvasRenderer.SetAlpha(initialAlpha);
+        image.canvasRenderer.SetAlpha(initialAlpha);
         ProgressBar.canvasRenderer.SetAlpha(initialAlpha);
 
-        EmptyBar.CrossFadeAlpha(fadeTo, FadeDuration, true);
+        image.CrossFadeAlpha(fadeTo, FadeDuration, true);
         ProgressBar.CrossFadeAlpha(fadeTo, FadeDuration, true);
     }
 

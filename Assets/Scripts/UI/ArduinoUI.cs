@@ -22,7 +22,7 @@ public class ArduinoUI : MonoBehaviour
     public Slider DistanceSlider;
     public DistanceSlider CustomDistanceSlider;
 
-    public BoostBar BoostBar;
+    public BoostBar boostBar;
 
     [Header("Messages")]
     [TextArea]
@@ -75,33 +75,22 @@ public class ArduinoUI : MonoBehaviour
         GameManager.TimerChanged += GameManager_TimerChanged;
         Bird.FruitAmountChanged += Bird_FruitAmountChanged;
         Bird.BoostStateChanged += Bird_BoostStateChanged;
-        Bird.AnimationStateChanged += Bird_AnimationStateChanged;
         Bird.DistanceChanged += Bird_DistanceChanged;
+    }
+
+    void OnDisable()
+    {
+        ArduinoConnector.OutputReceived -= ArduinoConnector_OutputReceived;
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
+        GameManager.TimerChanged -= GameManager_TimerChanged;
+        Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
+        Bird.BoostStateChanged -= Bird_BoostStateChanged;
+        Bird.DistanceChanged -= Bird_DistanceChanged;
     }
 
     private void Bird_DistanceChanged(object sender, float distance)
     {
         UpdateDistance(distance);
-    }
-
-    private void Bird_AnimationStateChanged(object sender, AnimationStateChangedEventArgs e)
-    {
-        switch (e.AnimationState)
-        {           
-            case AnimationState.Takeoff:
-                BoostBar.ShowBar(true);
-                break;
-            case AnimationState.Landing:
-                BoostBar.ResetColor();      // Revert bar color
-                BoostBar.ShowBar(false);    // Hide bar
-                break;
-            case AnimationState.Fly:
-                BoostBar.ResetColor();
-                break;
-            case AnimationState.Glide:
-                //ClearMessage();
-                break;
-        }
     }
 
     private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
@@ -123,16 +112,6 @@ public class ArduinoUI : MonoBehaviour
     private void GameManager_TimerChanged(object sender, TimerChangedEventArgs e)
     {
         UpdateTimer(e.Time);
-    }
-
-    void OnDisable()
-    {
-        ArduinoConnector.OutputReceived -= ArduinoConnector_OutputReceived;
-        GameManager.GameStateChanged -= GameManager_GameStateChanged;
-        GameManager.TimerChanged -= GameManager_TimerChanged;    
-        Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
-        Bird.BoostStateChanged -= Bird_BoostStateChanged;
-        Bird.DistanceChanged -= Bird_DistanceChanged;
     }
 
     private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
@@ -173,7 +152,7 @@ public class ArduinoUI : MonoBehaviour
 
         // Update boost bar progress
         float boostProgress = Mathf.Clamp01(e.BoostBerries * 0.1f);
-        BoostBar.UpdateProgress(boostProgress);
+        boostBar.UpdateProgress(boostProgress);
     }
 
     void Update()

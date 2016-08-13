@@ -27,10 +27,9 @@ public class TimerChangedEventArgs : EventArgs
     public float Time;
 }
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : MonoBehaviour
 {
-    protected GameManager() { }
-
+    public static GameManager Instance { get; private set; }
     public static int BerriesRequiredToBoost = 10;
 
     #region Events and Delegates
@@ -53,11 +52,16 @@ public class GameManager : Singleton<GameManager>
     float elapsedTime { get; set; }
     float timeTaken { get; set; }
 
-    //void Awake()
-    //{
-    //    if (Instance == null)
-    //        Instance = this;
-    //}
+    void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        Instance = null;
+    }
 
     void Start()
     {
@@ -80,9 +84,9 @@ public class GameManager : Singleton<GameManager>
 
     void OnDisable()
     {
-        Bird.BoostStateChanged -= Bird_BoostStateChanged;
         Bird.DistanceChanged -= Bird_DistanceChanged;
         Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
+        Bird.BoostStateChanged -= Bird_BoostStateChanged;
     }
 
     private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
