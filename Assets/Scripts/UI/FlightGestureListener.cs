@@ -5,6 +5,8 @@ using System;
 
 public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListenerInterface
 {
+    public static event Action<string> OnPrimaryUserLost;
+
     [Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
     public int playerIndex = 0;
 
@@ -125,6 +127,8 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         if (!manager || (userIndex != playerIndex))
             return;
 
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.UserDetected));
+
         // detect these user specific gestures
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeLeft);
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeRight);
@@ -151,6 +155,11 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
 
         primaryUserLost = true;
 
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.UserLost));
+
+        if (OnPrimaryUserLost != null)
+            OnPrimaryUserLost("Primary user lost");
+                
         if (gestureInfo != null)
         {
             gestureInfo.GetComponent<GUIText>().text = string.Empty;

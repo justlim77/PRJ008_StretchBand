@@ -433,6 +433,7 @@ public class Bird : MonoBehaviour
         IInteractable interactable = other.GetComponent<IInteractable>();
         if (interactable != null)
         {
+            AudioManager.Instance.RandomizeSFX(AudioDatabase.Instance.GetClip(SoundType.Pickup));
             interactable.Interact(this, MagnetPoint);
         }
     }

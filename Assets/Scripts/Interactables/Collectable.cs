@@ -11,6 +11,8 @@ public class Collectable : MonoBehaviour, IInteractable
     public delegate void CollectableCollectedEventHandler(object sender, EventArgs e);
     public static event CollectableCollectedEventHandler CollectableCollected;
 
+    float accelerationFactor = 0.5f;
+
     void Awake()
     {
         _InitialPos = this.transform.position;
@@ -21,13 +23,19 @@ public class Collectable : MonoBehaviour, IInteractable
     {
         _Target = null;
 
+        CancelInvoke();
+
         transform.position = _InitialPos;
         transform.localScale = _InitialScale;
 
         _HasInteracted = false;
         _Registered = false;
 
+        accel = 0.0f;
+
         GetComponent<Renderer>().enabled = true;
+
+        GameManager.GameStateChanged -= GameManager_GameStateChanged;
 
         return true;
     }
@@ -41,18 +49,30 @@ public class Collectable : MonoBehaviour, IInteractable
         if (arg is Transform)
         {
             _HasInteracted = true;
-
+            GameManager.GameStateChanged += GameManager_GameStateChanged;
              _Target = (Transform)arg;
         }
     }
 
+    private void GameManager_GameStateChanged(object sender, GameStateChangedEventArgs e)
+    {
+        switch (e.GameState)
+        {
+            case GameState.End:
+                Initialize();
+                break;
+        }
+    }
+
+    float accel = 0.0f;
     bool _Registered = false;
 	void Update ()
     {
         if (_Target != null)
         {
+            accel += accelerationFactor; 
             transform.localScale = Vector3.MoveTowards(transform.localScale, Vector3.zero, Constants.collectable_shrink_speed * Time.deltaTime);
-            transform.position = Vector3.MoveTowards(transform.position, _Target.position, Constants.collectable_magnet_speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, _Target.position, Constants.collectable_magnet_speed * accel * Time.deltaTime);
 
             if (!_Registered)
             {

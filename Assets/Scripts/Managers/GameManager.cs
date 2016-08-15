@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 
 public enum GameState
 {
@@ -72,9 +73,20 @@ public class GameManager : MonoBehaviour
 
     void OnEnable()
     {
-        Bird.DistanceChanged += Bird_DistanceChanged;
+        //Bird.DistanceChanged += Bird_DistanceChanged;
         Bird.FruitAmountChanged += Bird_FruitAmountChanged;
         Bird.BoostStateChanged += Bird_BoostStateChanged;
+        FlightGestureListener.OnPrimaryUserLost += FlightGestureListener_OnPrimaryUserLost;
+
+    }
+
+    private void FlightGestureListener_OnPrimaryUserLost(string obj)
+    {
+        if (GameState == GameState.Postgame || GameState == GameState.End)
+            SceneManager.LoadScene(0);
+        else 
+            SetState(GameState.Pregame);
+
     }
 
     private void Bird_FruitAmountChanged(object sender, FruitAmountChangedEventArgs e)
@@ -87,6 +99,7 @@ public class GameManager : MonoBehaviour
         Bird.DistanceChanged -= Bird_DistanceChanged;
         Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
         Bird.BoostStateChanged -= Bird_BoostStateChanged;
+        FlightGestureListener.OnPrimaryUserLost -= FlightGestureListener_OnPrimaryUserLost;
     }
 
     private void Bird_BoostStateChanged(object sender, BoostStateChangedEventArgs e)
@@ -103,6 +116,7 @@ public class GameManager : MonoBehaviour
     {
         if (distance >= DistanceToTravel)
         {
+            Bird.DistanceChanged -= Bird_DistanceChanged;
             SetState(GameState.End);
         }
     }
@@ -157,6 +171,7 @@ public class GameManager : MonoBehaviour
 
         GameState = state;
         OnGameStateChanged(state);
+        Debug.Log("Game state set to " + GameState.ToString());
 
         switch (state)
         {
@@ -168,6 +183,9 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.End:
                 StopTimer();
+                break;
+            case GameState.Postgame:
+                AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.GameWin));
                 break;
         }
     }
@@ -193,6 +211,7 @@ public class GameManager : MonoBehaviour
 
     bool Initialize()
     {
+        Bird.DistanceChanged += Bird_DistanceChanged;
         StopTimer();
         ResetTimer();
         boostCount = 0;

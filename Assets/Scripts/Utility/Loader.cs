@@ -5,6 +5,7 @@ public class Loader : MonoBehaviour
 {
     [Header("Manager Prefabs")]
     public GameObject AudioManagerPrefab;
+    public GameObject AudioDatabasePrefab;
     public GameObject KinectManagerPrefab;
 
     [Header("Scene Configuration")]
@@ -12,21 +13,26 @@ public class Loader : MonoBehaviour
     public bool allowHandClicks = false;
     public bool controlMouseCursor = false;
     public bool controlMouseDrag = false;
+    public bool showMouseCursor = false;
 
     [Header("Play Background Music")]
-    public bool playBGM = true;
+    public bool muteBGM = false;
+    public bool muteSFX = false;
+    public bool muteAmbience = true;
     public AudioClip bgmClip;
+    public AudioClip ambienceClip;
 
     // Use this for initialization
     void Awake ()
     {
         InitializeManagers();
 
-        if (playBGM)
-        {
-            AudioManager.Instance.PlayBGM(bgmClip);
-        }
+        AudioManager.Instance.MuteBGM(muteBGM);
+        AudioManager.Instance.PlayBGM(bgmClip, ambienceClip);
+        AudioManager.Instance.MuteAmbience(muteAmbience);
+        AudioManager.Instance.MuteSFX(muteSFX);
 
+        Cursor.visible = showMouseCursor;
     }
 	
 	bool InitializeManagers()
@@ -36,6 +42,13 @@ public class Loader : MonoBehaviour
             GameObject audioManager = Instantiate(AudioManagerPrefab);
             audioManager.name = AudioManagerPrefab.name;
             Debug.LogWarning("AudioManager not found. Creating instance of AudioManager.");
+        }
+
+        if(AudioDatabase.Instance == null)
+        {
+            GameObject audioDatabase = Instantiate(AudioDatabasePrefab);
+            audioDatabase.name = AudioDatabasePrefab.name;
+            Debug.LogWarning("AudioDatabase not found. Creating instance of AudioDatabase.");
         }
 
         if (KinectManager.Instance == null)

@@ -55,6 +55,8 @@ public class SoundControl : MonoBehaviour {
                 }
                 break;
         }
+
+        
     }
 
     //public void OnPointerClick(PointerEventData eventData)
