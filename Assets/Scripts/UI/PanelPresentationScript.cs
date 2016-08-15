@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PanelPresentationScript : MonoBehaviour
 {
@@ -27,6 +28,21 @@ public class PanelPresentationScript : MonoBehaviour
         interactionManager.controlMouseCursor = ControlMouseCursor;
     }
 
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+    }
+
+    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+    {
+        StartCoroutine(OnLevelWasLoaded());
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -39,10 +55,12 @@ public class PanelPresentationScript : MonoBehaviour
             if (gestureListener.IsPrimaryUserDetected())
             {
                 LevelPanel.SetOrientation(PanelOrientation.Center, _Scaler.referenceResolution);
+                Debug.Log("Primary user detected.");
             }
             else if (gestureListener.IsPrimaryUserLost())
             {
                 SlideLevelPanel();
+                Debug.Log("Primary user lost.");
             }
         }
     }
@@ -50,5 +68,13 @@ public class PanelPresentationScript : MonoBehaviour
     public void SlideLevelPanel()
     {
         LevelPanel.SetOrientation(PanelOrientation.Left, _Scaler.referenceResolution);
+    }
+
+    IEnumerator OnLevelWasLoaded()
+    {
+        KinectManager.Instance.refreshAvatarControllers();
+        KinectManager.Instance.refreshGestureListeners();
+        yield return new WaitForEndOfFrame();
+
     }
 }

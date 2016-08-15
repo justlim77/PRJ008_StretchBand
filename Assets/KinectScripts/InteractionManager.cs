@@ -924,7 +924,7 @@ public class InteractionManager : MonoBehaviour
                 }
             }
 
-            _CalibrationText.text = sGuiText;
+            //_CalibrationText.text = sGuiText;
         }
     }
 

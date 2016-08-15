@@ -23,8 +23,8 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 
 		string sGestureText = string.Format ("{0} Grip detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
 
-        InteractionManager manager = InteractionManager.Instance;
-        manager.CalibrationText.text = sGestureText;
+        //InteractionManager manager = InteractionManager.Instance;
+        //manager.CalibrationText.text = sGestureText;
         //interactionInfo.text = sGestureText;
 		//Debug.Log (sGestureText);
 
@@ -39,8 +39,8 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 
 		string sGestureText = string.Format ("{0} Release detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
 
-        InteractionManager manager = InteractionManager.Instance;
-        manager.CalibrationText.text = sGestureText;
+        //InteractionManager manager = InteractionManager.Instance;
+        //manager.CalibrationText.text = sGestureText;
         //interactionInfo.text = sGestureText;
 		//Debug.Log (sGestureText);
 
@@ -55,8 +55,8 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
 
         string sGestureText = string.Format("{0} Click detected; Pos: {1}", !isRightHand ? "Left" : "Right", handScreenPos);
 
-        InteractionManager manager = InteractionManager.Instance;
-        manager.CalibrationText.text = sGestureText;
+        //InteractionManager manager = InteractionManager.Instance;
+        //manager.CalibrationText.text = sGestureText;
         //interactionInfo.text = sGestureText;
 		Debug.Log (sGestureText);
 
@@ -79,8 +79,8 @@ public class InteractionListener : MonoBehaviour, InteractionListenerInterface
                 interactionInfo.text = string.Empty;
 			}
 
-            InteractionManager manager = InteractionManager.Instance;
-            manager.CalibrationText.text = string.Empty;
+            //InteractionManager manager = InteractionManager.Instance;
+            //manager.CalibrationText.text = string.Empty;
         }
 	}
 }

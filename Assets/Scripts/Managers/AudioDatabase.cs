@@ -3,11 +3,14 @@ using System.Collections;
 
 public enum SoundType
 {
-    Background,
     Ambience,
+    Background,
+    BoostWindowActivated,
+    Chirp,
     GameWin,
-    Pickup,
     LevelSelected,
+    Pickup,
+    SpeedUp,
     UserDetected,
     UserLost
 }
@@ -29,6 +32,11 @@ public class AudioDatabase : MonoBehaviour
     public AudioClip userDetected;
     public AudioClip userLost;
     public AudioClip gameWin;
+    public AudioClip boostWindowActivated;
+
+    [Header("Bird")]
+    public AudioClip chirp;
+    public AudioClip speedUp;
 
     void Awake()
     {
@@ -52,11 +60,20 @@ public class AudioDatabase : MonoBehaviour
             case SoundType.Background:
                 clip = bgm;
                 break;
+            case SoundType.BoostWindowActivated:
+                clip = boostWindowActivated;
+                break;
+            case SoundType.Chirp:
+                clip = chirp;
+                break;
             case SoundType.LevelSelected:
                 clip = levelSelected;
                 break;
             case SoundType.Pickup:
                 clip = pickup[Random.Range(0,pickup.Length)];
+                break;
+            case SoundType.SpeedUp:
+                clip = speedUp;
                 break;
             case SoundType.UserDetected:
                 clip = userDetected;

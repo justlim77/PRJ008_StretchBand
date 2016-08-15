@@ -129,6 +129,11 @@ public class GameManager : MonoBehaviour
             SetState(GameState.Pregame);
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
+
         if (timerStart)
         {
             //ElapsedTime = Time.time - startTime;

@@ -214,6 +214,7 @@ public class Bird : MonoBehaviour
     IEnumerator EnableBoostWindow()
     {
         CanBoost = true;
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.BoostWindowActivated));
 
         yield return new WaitForSeconds(BoostWindow);
 
@@ -228,6 +229,7 @@ public class Bird : MonoBehaviour
         {
             case GameState.Pregame:
                 Initialize();
+                AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.Chirp));
                 break;
             case GameState.Playing:
                 SetInMotion(true);
@@ -245,6 +247,7 @@ public class Bird : MonoBehaviour
         CancelInvoke();
         StopAllCoroutines();
         ResetAnimationTriggers();
+        boostState = BoostState.Cancelled;
         animationState = AnimationState.Idle;
         totalBerries = 0;
         boostBerries = 0;
@@ -330,12 +333,13 @@ public class Bird : MonoBehaviour
     void Boost()
     {
         forceApplied = true;
-        StopAllCoroutines();     // Ensure countdown is stopped
+        StopAllCoroutines();                    // Ensure countdown is stopped
         boostState = BoostState.Boosting;       // Change boost state to Boosting
         animationState = AnimationState.Glide;  // Change to glide animation
         radius = BoostRadius;                   // Increase collection radius
         boostParticles.Play();                  // Play boost particles
         _force *= BoostMultiplier;              // Multiply forward force
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.SpeedUp));
 
         Invoke("CancelBoost", BoostTime);
     }
@@ -390,6 +394,7 @@ public class Bird : MonoBehaviour
         } while (Vector3.Distance(transform.position, targetPos) > 0.01f);
         animationState = AnimationState.Landing;
         transform.rotation = Quaternion.identity;
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.Chirp));
         GameManager.Instance.SetState(GameState.Postgame);
         //takeoff = false;
     }

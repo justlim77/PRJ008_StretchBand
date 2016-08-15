@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.SceneManagement;
 //using Windows.Kinect;
 
 public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListenerInterface
@@ -140,6 +141,11 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         {
             gestureInfo.GetComponent<GUIText>().text = "Swipe left, right or up to change the slides.";
         }
+
+        InteractionManager interactionManager = InteractionManager.Instance;
+        interactionManager.CalibrationText.text = "USER FOUND";
+
+        Debug.Log("Main user found");
     }
 
     /// <summary>
@@ -164,6 +170,9 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         {
             gestureInfo.GetComponent<GUIText>().text = string.Empty;
         }
+
+        InteractionManager interactionManager = InteractionManager.Instance;
+        interactionManager.CalibrationText.text = "USER LOST";
     }
 
     /// <summary>
@@ -242,9 +251,25 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         }
 
         if (gesture == KinectGestures.Gestures.SwipeLeft)
+        {
             swipeLeft = true;
+            GameManager gm = GameManager.Instance;
+            if (gm)
+            {
+                if(gm.GameState == GameState.Postgame)
+                    SceneManager.LoadScene(0);
+            } 
+        }
         else if (gesture == KinectGestures.Gestures.SwipeRight)
+        {
             swipeRight = true;
+            GameManager gm = GameManager.Instance;
+            if (gm)
+            {
+                if (gm.GameState == GameState.Postgame)
+                    gm.SetState(GameState.Pregame);
+            }
+        }
         else if (gesture == KinectGestures.Gestures.SwipeUp)
             swipeUp = true;
 
@@ -292,7 +317,8 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         {
             progressDisplayed = false;
             gestureInfo.GetComponent<GUIText>().text = String.Empty;
-
+            InteractionManager interactionManager = InteractionManager.Instance;
+            interactionManager.CalibrationText.text = string.Empty;
             Debug.Log("Forced progress to end.");
         }
     }

@@ -114,8 +114,8 @@ public class AudioManager : Singleton<AudioManager> {
         float randomPitch = UnityEngine.Random.Range(1.0f - 0.05f, 1.0f + 0.05f);
 
         m_SFX.pitch = randomPitch;
-        m_SFX.clip = clips[randomIndex];
-        m_SFX.Play();
+        var clip = clips[randomIndex];
+        m_SFX.PlayOneShot(clip);
     }
 
     /// <summary>
