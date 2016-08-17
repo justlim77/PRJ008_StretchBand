@@ -44,7 +44,7 @@ public class ResultPanel : MonoBehaviour
         {
             case GameState.Postgame:
                 berryCountLabel.text = string.Format("<size=96>{0}</size> berries collected", e.BerriesCollected);
-                timerCountLabel.text = string.Format("<size=96>{0}</size> seconds taken", e.TimeTaken);
+                timerCountLabel.text = string.Format("<size=96>{0:F1}</size> seconds taken", e.TimeTaken);
                 boostCountLabel.text = string.Format("<size=96>{0}</size> boost(s) achieved", e.BoostCount);
                 canvasGroup.DOFade(1, 0.5f);
                 break;

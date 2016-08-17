@@ -214,7 +214,7 @@ public class Bird : MonoBehaviour
     IEnumerator EnableBoostWindow()
     {
         CanBoost = true;
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.BoostWindowActivated));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.BoostWindowActivated));
 
         yield return new WaitForSeconds(BoostWindow);
 
@@ -229,7 +229,7 @@ public class Bird : MonoBehaviour
         {
             case GameState.Pregame:
                 Initialize();
-                AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.Chirp));
+                AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(BirdSound.Chirp));
                 break;
             case GameState.Playing:
                 SetInMotion(true);
@@ -259,6 +259,7 @@ public class Bird : MonoBehaviour
         SetInMotion(false);
         transform.position = _OriginalPosition;
         transform.rotation = Quaternion.identity;
+        AudioManager.Instance.StopSFX();
     }
 
     public void SetInMotion(bool value)
@@ -340,7 +341,8 @@ public class Bird : MonoBehaviour
         radius = BoostRadius;                   // Increase collection radius
         boostParticles.Play();                  // Play boost particles
         _force *= BoostMultiplier;              // Multiply forward force
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.SpeedUp));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.SpeedUp));
+        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(BirdSound.Flapping));
 
         Invoke("CancelBoost", BoostTime);
     }
@@ -356,6 +358,7 @@ public class Bird : MonoBehaviour
         radius = _originalRadius;               // Revert collection radius
         boostParticles.Stop();                  // Stop boost particles
         _force = MovementForce;                 // Revert forward force
+        AudioManager.Instance.StopSFX();
     }
 
     IEnumerator TakeOff()
@@ -395,7 +398,7 @@ public class Bird : MonoBehaviour
         } while (Vector3.Distance(transform.position, targetPos) > 0.01f);
         animationState = AnimationState.Landing;
         transform.rotation = Quaternion.identity;
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.Chirp));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.Chirp));
         GameManager.Instance.SetState(GameState.Postgame);
         //takeoff = false;
     }

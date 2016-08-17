@@ -9,7 +9,7 @@ public class LevelPanel : PanelBase
 
     public void AsynchronousLoadLevel(LevelButton button)
     {
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.LevelSelected));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.LevelSelected));
 
         StartCoroutine(AsynchronousLoad(button));
     }

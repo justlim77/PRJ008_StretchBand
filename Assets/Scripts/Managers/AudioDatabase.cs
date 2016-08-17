@@ -15,6 +15,12 @@ public enum SoundType
     UserLost
 }
 
+public enum BirdSound
+{
+    Chirp,
+    Flapping
+}
+
 public class AudioDatabase : MonoBehaviour
 {
     protected AudioDatabase() { }
@@ -33,10 +39,11 @@ public class AudioDatabase : MonoBehaviour
     public AudioClip userLost;
     public AudioClip gameWin;
     public AudioClip boostWindowActivated;
+    public AudioClip speedUp;
 
     [Header("Bird")]
     public AudioClip chirp;
-    public AudioClip speedUp;
+    public AudioClip flapping;
 
     void Awake()
     {
@@ -63,9 +70,6 @@ public class AudioDatabase : MonoBehaviour
             case SoundType.BoostWindowActivated:
                 clip = boostWindowActivated;
                 break;
-            case SoundType.Chirp:
-                clip = chirp;
-                break;
             case SoundType.LevelSelected:
                 clip = levelSelected;
                 break;
@@ -83,6 +87,23 @@ public class AudioDatabase : MonoBehaviour
                 break;
             case SoundType.GameWin:
                 clip = gameWin;
+                break;
+        }
+
+        return clip;
+    }
+
+    public AudioClip GetClip(BirdSound birdSound)
+    {
+        AudioClip clip = null;
+
+        switch (birdSound)
+        {
+            case BirdSound.Chirp:
+                clip = chirp;
+                break;
+            case BirdSound.Flapping:
+                clip = flapping;
                 break;
         }
 

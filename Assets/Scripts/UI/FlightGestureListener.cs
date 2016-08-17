@@ -30,6 +30,15 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
     private bool primaryUserDetected;
     private bool primaryUserLost;
 
+    private bool _isPrimaryUserCurrentlyDetected = false;
+    public bool IsPrimaryUserCurrentlyDetected
+    {
+        get { return _isPrimaryUserCurrentlyDetected; }
+        set { _isPrimaryUserCurrentlyDetected = value;
+            Debug.Log(value);
+        }
+    }
+
     /// <summary>
     /// Gets the singleton CubeGestureListener instance.
     /// </summary>
@@ -88,14 +97,15 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
     }
 
     /// <summary>
-    /// Determines whether swipe right is detected.
+    /// Determines whether primary user is detected.
     /// </summary>
-    /// <returns><c>true</c> if swipe right is detected; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if primary user is detected; otherwise, <c>false</c>.</returns>
     public bool IsPrimaryUserDetected()
     {
         if (primaryUserDetected)
         {
             primaryUserDetected = false;
+            IsPrimaryUserCurrentlyDetected = true;
             return true;
         }
 
@@ -111,6 +121,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         if (primaryUserLost)
         {
             primaryUserLost = false;
+            IsPrimaryUserCurrentlyDetected = false;
             return true;
         }
 
@@ -129,7 +140,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         if (!manager || (userIndex != playerIndex))
             return;
 
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.UserDetected));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.UserDetected));
 
         // detect these user specific gestures
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeLeft);
@@ -137,6 +148,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeUp);
 
         primaryUserDetected = true;
+        IsPrimaryUserCurrentlyDetected = true;
 
         if (OnPrimaryUserFound != null)
             OnPrimaryUserFound("Primary user found");
@@ -164,8 +176,9 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
             return;
 
         primaryUserLost = true;
+        IsPrimaryUserCurrentlyDetected = false;
 
-        AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.UserLost));
+        AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.UserLost));
 
         if (OnPrimaryUserLost != null)
             OnPrimaryUserLost("Primary user lost");

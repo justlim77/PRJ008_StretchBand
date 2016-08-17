@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
                 StopTimer();
                 break;
             case GameState.Postgame:
-                AudioManager.Instance.PlaySFX(AudioDatabase.Instance.GetClip(SoundType.GameWin));
+                AudioManager.Instance.PlayOneShot(AudioDatabase.Instance.GetClip(SoundType.GameWin));
                 break;
         }
     }

@@ -29,6 +29,7 @@ public class ArduinoUI : MonoBehaviour
     public string PregameMessage;
     [TextArea]
     public string PostgameMessage;
+    public string[] BoostMessages;
 
     [Header("UI Animators")]
     public Animator FruitLabelAnimator;
@@ -71,6 +72,7 @@ public class ArduinoUI : MonoBehaviour
     void OnEnable()
     {
         ArduinoConnector.OutputReceived += ArduinoConnector_OutputReceived;
+        ArduinoConnector.OnBandConnectionLost += ArduinoConnector_OnBandConnectionLost;
         BandConnectJob.OnBandConnectionEstablished += BandConnectJob_OnBandConnectionEstablished;
         FlightGestureListener.OnPrimaryUserFound += FlightGestureListener_OnPrimaryUserFound;
         FlightGestureListener.OnPrimaryUserLost += FlightGestureListener_OnPrimaryUserLost;
@@ -80,9 +82,15 @@ public class ArduinoUI : MonoBehaviour
         Bird.BoostStateChanged += Bird_BoostStateChanged;
         Bird.DistanceChanged += Bird_DistanceChanged;
     }
+
+    private void ArduinoConnector_OnBandConnectionLost(string obj)
+    {
+        UpdateMessage(obj);
+    }
+
     private void BandConnectJob_OnBandConnectionEstablished(string arg1, SerialPort arg2)
     {
-        if (FlightGestureListener.Instance.IsPrimaryUserDetected())
+        if (FlightGestureListener.Instance.IsPrimaryUserCurrentlyDetected)
             UpdateMessage(PregameMessage);
         else
             UpdateMessage(arg1, 2);
@@ -104,6 +112,7 @@ public class ArduinoUI : MonoBehaviour
     void OnDisable()
     {
         ArduinoConnector.OutputReceived -= ArduinoConnector_OutputReceived;
+        ArduinoConnector.OnBandConnectionLost -= ArduinoConnector_OnBandConnectionLost;
         BandConnectJob.OnBandConnectionEstablished -= BandConnectJob_OnBandConnectionEstablished;    
         FlightGestureListener.OnPrimaryUserFound -= FlightGestureListener_OnPrimaryUserFound;
         FlightGestureListener.OnPrimaryUserLost -= FlightGestureListener_OnPrimaryUserLost;
@@ -127,7 +136,8 @@ public class ArduinoUI : MonoBehaviour
                 UpdateMessage("Energy Up!\nPull band to boost!", 5);
                 break;
             case BoostState.Boosting:
-                UpdateMessage("Good Job!", 1);
+                string msg = BoostMessages[UnityEngine.Random.Range(0, BoostMessages.Length)];
+                UpdateMessage(msg, 1);
                 break;
             case BoostState.Cancelled:
                 //UpdateMessage();
@@ -146,10 +156,12 @@ public class ArduinoUI : MonoBehaviour
         {
             case GameState.Pregame:
                 UpdateTimer(e.GameDuration);
-                if (FlightGestureListener.Instance.IsPrimaryUserDetected() && BandConnectJob.BandFound)
+                if (FlightGestureListener.Instance.IsPrimaryUserCurrentlyDetected && BandConnectJob.BandFound)
                     UpdateMessage(PregameMessage);
-                else
-                    UpdateMessage();
+                else if (!BandConnectJob.BandFound)
+                    UpdateMessage("Searching for band...");
+                //else
+                //    UpdateMessage();
                 _DistanceToTravel = e.DistanceToTravel;
                 CustomDistanceSlider.Fade(FadeType.Out);
                 break;
@@ -255,13 +267,16 @@ public class ArduinoUI : MonoBehaviour
         }
     }
 
+    string _cachedMessage = "";
     IEnumerator RunUpdateMessage(string msg, float duration)
     {
+        _cachedMessage = msg;
         SetAnimation(CanvasAnimationState.ShowMessage);
 
         yield return new WaitForSeconds(duration);
 
-        SetAnimation(CanvasAnimationState.HideMessage);
+        if(_cachedMessage == msg)
+            SetAnimation(CanvasAnimationState.HideMessage);
     }
 
     public void UpdateFruits(int value)

@@ -69,6 +69,8 @@ public class ArduinoConnector : MonoBehaviour
     public delegate void BandFoundReceivedEventHandler(object sender, SerialPort e);
     public static event BandFoundReceivedEventHandler BandFound;
 
+    public static event Action<string> OnBandConnectionLost;
+
     void Awake()
     {
         if (Instance == null)
@@ -82,6 +84,11 @@ public class ArduinoConnector : MonoBehaviour
     }
 
     void Start()
+    {
+        StartBandConnection();
+    }
+
+    void StartBandConnection()
     {
         _OutputArray = new int[strideLength];
         _CachedArray = new int[strideLength];
@@ -107,6 +114,11 @@ public class ArduinoConnector : MonoBehaviour
         //_Stream = TryGetSerialPorts();
 
         //StartCoroutine(TryConnection());
+        //BandConnectJob.BandFound = false;
+        //if(_BandConnectJob != null)
+        //    _BandConnectJob.Abort();
+        Close();
+        _BandConnectJob = null;
         _BandConnectJob = new BandConnectJob(ref _OutputArray, ref _CachedArray, StrideLength, ref _Stream);
         _BandConnectJob.Start();
         BandConnectJob.OnBandConnectionEstablished += BandConnectJob_OnBandConnectionEstablished;
@@ -200,6 +212,15 @@ public class ArduinoConnector : MonoBehaviour
             {
                 BandConnectJob.BandUpdate = false;
             }
+        }
+
+        // Manual band reconnection
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if (OnBandConnectionLost != null)
+                OnBandConnectionLost("Searching for band");
+            BandConnectJob.BandFound = false;
+            StartBandConnection();
         }
 
         //// Check data lost during band reading

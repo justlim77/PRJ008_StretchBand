@@ -23,7 +23,8 @@ public class Collectable : MonoBehaviour, IInteractable
     {
         _Target = null;
 
-        CancelInvoke();
+        if(this.gameObject != null)
+            CancelInvoke();
 
         transform.position = _InitialPos;
         transform.localScale = _InitialScale;

@@ -12,7 +12,7 @@ public class PlaySFX : MonoBehaviour, IPointerClickHandler {
     {
         for (int i = 0; i < m_ClickSFX.Length; i++)
         {
-            AudioManager.Instance.PlaySFX(m_ClickSFX[i], 1, 0.5f);
+            AudioManager.Instance.PlayOneShot(m_ClickSFX[i], 1, 0.5f);
         }
     }
 }

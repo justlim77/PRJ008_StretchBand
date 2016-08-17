@@ -31,6 +31,7 @@ public class Loader : MonoBehaviour
         AudioManager.Instance.PlayBGM(bgmClip, ambienceClip);
         AudioManager.Instance.MuteAmbience(muteAmbience);
         AudioManager.Instance.MuteSFX(muteSFX);
+        AudioManager.Instance.SetAmbientVolume(0.3f);
 
         Cursor.visible = showMouseCursor;
     }
