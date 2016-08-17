@@ -53,8 +53,10 @@ public class ArduinoConnector : MonoBehaviour
     public Text status;
 
     private BandReadJob _BandReadJob;
+    private BandConnectJob _BandConnectJob;
+    private Thread _BandReadThread;
+    private Thread _BandConnectThread;
 
-    private Thread _Thread;
     private SerialPort _Stream;
     private WaitForSeconds _WaitForSeconds;
     private bool _IsRunning;
@@ -63,6 +65,9 @@ public class ArduinoConnector : MonoBehaviour
 
     public delegate void OutputReceivedEventHandler(object sender, OutputReceivedEventArgs e);
     public static event OutputReceivedEventHandler OutputReceived;
+
+    public delegate void BandFoundReceivedEventHandler(object sender, SerialPort e);
+    public static event BandFoundReceivedEventHandler BandFound;
 
     void Awake()
     {
@@ -96,8 +101,40 @@ public class ArduinoConnector : MonoBehaviour
         //    Debug.Log(string.Format("{0} – {1}", comPort.Name, comPort.Description));
         //}
 
-        _Stream = new SerialPort();
-        _Stream = TryGetSerialPorts();
+        //_Stream = new SerialPort();
+        //_Stream = TryGetSerialPorts();
+
+        //StartCoroutine(TryConnection());
+        _BandConnectJob = new BandConnectJob(ref _OutputArray, ref _CachedArray, StrideLength, ref _Stream);
+        _BandConnectJob.Start();
+        BandConnectJob.OnBandConnectionEstablished += BandConnectJob_OnBandConnectionEstablished;
+    }
+
+    private void BandConnectJob_OnBandConnectionEstablished(string obj, SerialPort stream)
+    {
+        BandConnectJob.OnBandConnectionEstablished -= BandConnectJob_OnBandConnectionEstablished;
+        _Stream = stream;
+        _BandConnectJob.Abort();
+        Open();
+    }
+
+    IEnumerator TryConnection()
+    {
+        bool result = false;
+        int tries = 50;        
+
+        while (result == false && tries > 0)
+        {
+            tries--;
+            result = TryGetSerialPorts(5000f);
+            Debug.Log("Attempting to get band serial port... Attempt " + tries);
+            yield return new WaitForEndOfFrame();
+        }
+
+        if (result == false)
+            Debug.Log("Failed to secure band connection.");
+        else
+            Debug.Log("Band Connection established!");
     }
 
     public void Open()
@@ -164,6 +201,7 @@ public class ArduinoConnector : MonoBehaviour
 
     void Update()
     {
+        // Band read threaded job
         if (_BandReadJob != null)
         {
             if (_BandReadJob.Update())
@@ -179,6 +217,25 @@ public class ArduinoConnector : MonoBehaviour
             BandReadJob.BandUpdate = false;
             OnOutputReceived(_OutputArray);
         }
+
+        // Band connect threaded job
+        if (!BandConnectJob.BandFound)
+        {
+            if (_BandConnectJob != null)
+            {
+                if (_BandConnectJob.Update())
+                {
+                    _BandConnectJob = null;
+                    _BandConnectJob = new BandConnectJob(ref _OutputArray, ref _CachedArray, StrideLength, ref _Stream);
+                    _BandConnectJob.Start();
+                }
+            }
+
+            if (BandConnectJob.BandUpdate)
+            {
+                BandConnectJob.BandUpdate = false;
+            }
+        }
     }
 
     public void Close()
@@ -193,8 +250,8 @@ public class ArduinoConnector : MonoBehaviour
 
         _IsRunning = false;    // stop listening thread
 
-        if(_Thread != null)
-            _Thread.Join(500);   // wait for listening thread to terminate (max. 500ms)
+        if(_BandReadThread != null)
+            _BandReadThread.Join(500);   // wait for listening thread to terminate (max. 500ms)
 
         if(_BandReadJob != null)
             _BandReadJob.Abort();
@@ -380,6 +437,12 @@ public class ArduinoConnector : MonoBehaviour
         }
     }
 
+    protected void OnBandFound()
+    {
+        if (BandFound != null)
+            BandFound(this, _Stream);
+    }
+
     public void SetPort(string portName)
     {
         Port = portName.ToUpper();
@@ -503,5 +566,120 @@ public class ArduinoConnector : MonoBehaviour
             }
         }
         return com;
+    }
+
+    bool TryGetSerialPorts(float timeout = 5000f)
+    {
+        SerialPort com = new SerialPort();
+        foreach (string s in SerialPort.GetPortNames())
+        {
+            com.Close(); // To handle the exception, in case the port isn't found and then they try again...
+
+            bool portfound = false;
+            com.PortName = s;
+            //com.BaudRate = 38400;
+            com.BaudRate = 9600;
+            try
+            {
+                com.Open();
+                Debug.Log("Trying port: " + s + "\r");
+            }
+            catch (IOException c)
+            {
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (InvalidOperationException c1)
+            {
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentNullException c2)
+            {
+                // System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c2);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (TimeoutException c3)
+            {
+                //  System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c3);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (UnauthorizedAccessException c4)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentOutOfRangeException c5)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c5);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            catch (ArgumentException c2)
+            {
+                //System.Windows.Forms.MessageBox.Show("Sorry, Exception Occured - " + c2);
+                Debug.Log("Invalid Port" + "\r");
+            }
+            if (!portfound)
+            {
+                if (com.IsOpen) // Port has been opened properly...
+                {
+                    com.ReadTimeout = ReadTimeout; // 500 millisecond timeout...
+                    Debug.Log("Attemption to open port " + com.PortName + "\r");
+                    try
+                    {
+                        Debug.Log("Waiting for a response from controller: " + com.PortName + "\r");
+                        //string comms = com.ReadLine();
+
+                        //_Stream = com;
+                        //_BandReadJob = new BandReadJob(ref _OutputArray, ref _CachedArray, StrideLength, _Stream);
+                        //_BandReadJob.Start();
+                        int comms = com.ReadByte();
+                        Debug.Log("Reading From Port " + com.PortName + "\r");
+                        Debug.Log("Value output: " + Convert.ToChar(comms));
+                        //if (comms.Substring(0, 1) == "A") // We have found the arduino!
+                        if (comms != 0)
+                        {
+                            _OutputArray[0] = Convert.ToChar(comms);
+                            BandReadJob.StrideCount++;
+
+                            Debug.Log(s + com.PortName + " Opened Successfully!" + "\r");
+                            //com.Write("a"); // Sends 0x74 to the arduino letting it know that we are connected!
+                            //com.ReadTimeout = ReadTimeout;
+                            //com.Write("a");
+                            Debug.Log("Port " + com.PortName + " Opened Successfully!" + "\r");
+                            Debug.Log(com.BaudRate);
+                            Debug.Log(com.PortName);
+
+                            //Port = _Stream.PortName;
+                            //Baudrate = _Stream.BaudRate;
+                            //Parity = _Stream.Parity;
+                            //DataBits = _Stream.DataBits;
+                            //StopBits = _Stream.StopBits;
+                            Port = com.PortName;
+                            Baudrate = com.BaudRate;
+                            Parity = com.Parity;
+                            DataBits = com.DataBits;
+                            StopBits = com.StopBits;
+
+                            _Stream = com;
+                            Open();
+
+                            return true;
+
+                        }
+                        else
+                        {
+                            Debug.Log("Port Not Found! Please cycle controller power and try again" + "\r");
+                            _BandReadJob.Abort();
+                            com.Close();
+                        }
+                    }
+                    catch (Exception e1)
+                    {
+                        Debug.Log("Incorrect Port! Trying again..." + e1);
+                        com.Close();
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
