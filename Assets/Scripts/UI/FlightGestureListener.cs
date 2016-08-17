@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListenerInterface
 {
     public static event Action<string> OnPrimaryUserLost;
+    public static event Action<string> OnPrimaryUserFound;
 
     [Tooltip("Index of the player, tracked by this component. 0 means the 1st player, 1 - the 2nd one, 2 - the 3rd one, etc.")]
     public int playerIndex = 0;
@@ -136,6 +137,9 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeUp);
 
         primaryUserDetected = true;
+
+        if (OnPrimaryUserFound != null)
+            OnPrimaryUserFound("Primary user found");
 
         if (gestureInfo != null)
         {

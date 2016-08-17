@@ -82,10 +82,10 @@ public class GameManager : MonoBehaviour
 
     private void FlightGestureListener_OnPrimaryUserLost(string obj)
     {
-        if (GameState == GameState.Postgame || GameState == GameState.End)
+        //if (GameState == GameState.Postgame || GameState == GameState.End)
             SceneManager.LoadScene(0);
-        else 
-            SetState(GameState.Pregame);
+        //else 
+        //    SetState(GameState.Pregame);
 
     }
 

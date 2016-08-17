@@ -252,6 +252,7 @@ public class Bird : MonoBehaviour
         totalBerries = 0;
         boostBerries = 0;
         boostParticles.Stop();
+        forceApplied = false;
         CanBoost = false;
         _CanMove = false;
         takeoff = false;
@@ -390,7 +391,7 @@ public class Bird : MonoBehaviour
             //transform.LookAt(targetPos);
             //transform.position = Vector3.MoveTowards(this.transform.position, targetPos, LandingSpeed * Time.deltaTime);
             yield return new WaitForFixedUpdate();
-            Debug.Log(Vector3.Distance(transform.position, targetPos));
+            //Debug.Log(Vector3.Distance(transform.position, targetPos));
         } while (Vector3.Distance(transform.position, targetPos) > 0.01f);
         animationState = AnimationState.Landing;
         transform.rotation = Quaternion.identity;
@@ -422,7 +423,7 @@ public class Bird : MonoBehaviour
         for (int i = 0; i < _Animator.parameters.Length; i++)
         {
             param = _Animator.parameters[i];
-            Debug.Log("Parameter name: " + param.name);
+            //Debug.Log("Parameter name: " + param.name);
 
             if (param.type == AnimatorControllerParameterType.Trigger)
             {

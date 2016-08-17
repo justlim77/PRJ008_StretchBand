@@ -32,7 +32,7 @@ public class BandConnectJob : ThreadedJob
     protected void BandConnectionEstablished()
     {
         if (OnBandConnectionEstablished != null)
-            OnBandConnectionEstablished("Band connection established.", _Stream);
+            OnBandConnectionEstablished("Band connection established", _Stream);
     }
 
     protected override void ThreadedFunction()

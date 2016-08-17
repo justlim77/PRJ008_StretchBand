@@ -8,7 +8,6 @@ public class ArduinoController : MonoBehaviour
     public static ArduinoController Instance { get; private set; }
 
     public ArduinoConnector connector;
-    public ArduinoUI UI;
     public int readTimeout = 5000;
     public float asyncReadTimeout = 10f;
     public int force;

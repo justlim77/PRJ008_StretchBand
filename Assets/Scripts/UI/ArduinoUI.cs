@@ -71,16 +71,42 @@ public class ArduinoUI : MonoBehaviour
     void OnEnable()
     {
         ArduinoConnector.OutputReceived += ArduinoConnector_OutputReceived;
+        BandConnectJob.OnBandConnectionEstablished += BandConnectJob_OnBandConnectionEstablished;
+        FlightGestureListener.OnPrimaryUserFound += FlightGestureListener_OnPrimaryUserFound;
+        FlightGestureListener.OnPrimaryUserLost += FlightGestureListener_OnPrimaryUserLost;
         GameManager.GameStateChanged += GameManager_GameStateChanged;
         GameManager.TimerChanged += GameManager_TimerChanged;
         Bird.FruitAmountChanged += Bird_FruitAmountChanged;
         Bird.BoostStateChanged += Bird_BoostStateChanged;
         Bird.DistanceChanged += Bird_DistanceChanged;
     }
+    private void BandConnectJob_OnBandConnectionEstablished(string arg1, SerialPort arg2)
+    {
+        if (FlightGestureListener.Instance.IsPrimaryUserDetected())
+            UpdateMessage(PregameMessage);
+        else
+            UpdateMessage(arg1, 2);
+    }
+
+    private void FlightGestureListener_OnPrimaryUserLost(string obj)
+    {
+        UpdateMessage(obj, 2);
+    }
+
+    private void FlightGestureListener_OnPrimaryUserFound(string obj)
+    {
+        if (BandConnectJob.BandFound)
+            UpdateMessage(PregameMessage);
+        else
+            UpdateMessage(obj + "\nPower on the band");
+    }
 
     void OnDisable()
     {
         ArduinoConnector.OutputReceived -= ArduinoConnector_OutputReceived;
+        BandConnectJob.OnBandConnectionEstablished -= BandConnectJob_OnBandConnectionEstablished;    
+        FlightGestureListener.OnPrimaryUserFound -= FlightGestureListener_OnPrimaryUserFound;
+        FlightGestureListener.OnPrimaryUserLost -= FlightGestureListener_OnPrimaryUserLost;
         GameManager.GameStateChanged -= GameManager_GameStateChanged;
         GameManager.TimerChanged -= GameManager_TimerChanged;
         Bird.FruitAmountChanged -= Bird_FruitAmountChanged;
@@ -120,7 +146,10 @@ public class ArduinoUI : MonoBehaviour
         {
             case GameState.Pregame:
                 UpdateTimer(e.GameDuration);
-                UpdateMessage(PregameMessage);
+                if (FlightGestureListener.Instance.IsPrimaryUserDetected() && BandConnectJob.BandFound)
+                    UpdateMessage(PregameMessage);
+                else
+                    UpdateMessage();
                 _DistanceToTravel = e.DistanceToTravel;
                 CustomDistanceSlider.Fade(FadeType.Out);
                 break;

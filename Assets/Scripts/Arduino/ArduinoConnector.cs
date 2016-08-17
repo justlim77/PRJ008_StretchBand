@@ -73,8 +73,10 @@ public class ArduinoConnector : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
-        else if (Instance != null && Instance != this)
-            Destroy(this.gameObject);
+        else
+            Destroy(gameObject);
+
+        DontDestroyOnLoad(gameObject);
 
         _WaitForSeconds = new WaitForSeconds(WaitBetweenReads);
     }
@@ -116,6 +118,15 @@ public class ArduinoConnector : MonoBehaviour
         _Stream = stream;
         _BandConnectJob.Abort();
         Open();
+        //BandReadJob.OnInvalidOutputReceived += BandReadJob_OnInvalidOutputReceived;
+    }
+
+    private void BandReadJob_OnInvalidOutputReceived(string obj)
+    {
+        BandConnectJob.BandFound = false;
+        Close();
+        Start();    // Restart band connection task
+        BandReadJob.OnInvalidOutputReceived -= BandReadJob_OnInvalidOutputReceived;
     }
 
     IEnumerator TryConnection()
@@ -146,59 +157,13 @@ public class ArduinoConnector : MonoBehaviour
             _Stream.PortName, _Stream.BaudRate, _Stream.Parity, _Stream.DataBits, _Stream.StopBits, _Stream.ReadTimeout));
         Debug.Log("Open connection started...");
 
-        //stream.DataReceived += (x,e) =>
-        //{
-        //    if(e.EventType == SerialData.Eof)
-        //    {
-        //        Debug.Log("nothing here");
-        //    }
-        //    else
-        //    {
-        //        SerialPort sp = (SerialPort)x;
-        //        string indata = sp.ReadExisting();
-        //        Debug.Log(indata);
-        //    }
-        //};
-
-        //try
-        //{
-        //    if (_Stream != null)
-        //    {
-        //        _Stream.Open();
-        //        _Stream.ReadTimeout = ReadTimeout;
-        //        Debug.Log("Port opened!");
-        //        //this.stream.DataReceived += DataReceivedHandler;
-        //        //this.stream.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-        //    }
-        //    else
-        //    {
-        //        if (_Stream.IsOpen)
-        //        {
-        //            print("Port is already open.");
-        //        }
-        //        else
-        //        {
-        //            print("Port is null.");
-        //        }
-        //    }
-
-        //    Debug.Log("Open connection completed.");
-        //}
-        //catch (Exception e)
-        //{
-        //    Debug.LogWarning("Could not open serial port: " + e.Message);
-        //}
-
-        //_running = true;
-        //ThreadStart ts = new ThreadStart(ReadByte);
-        //_thread = new Thread(ts);
-        //_thread.Start();
-
         _BandReadJob = new BandReadJob(ref _OutputArray, ref _CachedArray, StrideLength, _Stream);
         _BandReadJob.Start();
     }
 
+    bool _errorRaised = false;
+    int _cachedStrideCount = 0;
+    float _readTimeout = 2;
     void Update()
     {
         // Band read threaded job
@@ -236,6 +201,30 @@ public class ArduinoConnector : MonoBehaviour
                 BandConnectJob.BandUpdate = false;
             }
         }
+
+        //// Check data lost during band reading
+        //else if (BandConnectJob.BandFound)
+        //{
+        //    if (_BandReadJob != null)
+        //    {
+        //        _cachedStrideCount = BandReadJob.StrideCount;
+        //        _readTimeout -= Time.deltaTime;
+
+        //        if (_readTimeout <= 0)
+        //        {
+        //            Debug.Log(string.Format("BandStrideCount {0} vs CachedStride {1}", BandReadJob.StrideCount, _cachedStrideCount));
+        //            if (BandReadJob.StrideCount == _cachedStrideCount)
+        //            {
+        //                _readTimeout = 2;
+        //                if (!_errorRaised)
+        //                {
+        //                    _errorRaised = true;
+        //                    BandReadJob_OnInvalidOutputReceived("Invalid Output Received");
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
 
     public void Close()
@@ -251,10 +240,16 @@ public class ArduinoConnector : MonoBehaviour
         _IsRunning = false;    // stop listening thread
 
         if(_BandReadThread != null)
-            _BandReadThread.Join(500);   // wait for listening thread to terminate (max. 500ms)
+            _BandReadThread.Join(3000);   // wait for listening thread to terminate (max. 500ms)
 
         if(_BandReadJob != null)
             _BandReadJob.Abort();
+
+        if (_BandConnectThread != null)
+            _BandConnectThread.Join(3000);   // wait for listening thread to terminate (max. 500ms)
+
+        if (_BandConnectJob != null)
+            _BandConnectJob.Abort();
 
         Debug.Log("Close connection completed.");
     }
@@ -681,5 +676,10 @@ public class ArduinoConnector : MonoBehaviour
             }
         }
         return false;
+    }
+
+    void OnApplicationQuit()
+    {
+        Close();
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO.Ports;
 using System.Linq;
+using System;
 
 public class BandReadJob : ThreadedJob
 {
@@ -10,6 +11,9 @@ public class BandReadJob : ThreadedJob
     private SerialPort _Stream = null;
     private int _StrideLength = 0;
     public static int StrideCount = 0;
+
+    private int m_output = 0;
+    private int m_invalidValue = 0;
 
     public BandReadJob() { }
     public BandReadJob(ref int[] output, ref int[] cached, int strideLength, SerialPort stream)
@@ -20,20 +24,39 @@ public class BandReadJob : ThreadedJob
         _Stream = stream;
     }
 
+    public static event Action<string> OnInvalidOutputReceived;
+    protected void InvalidOutputReceived()
+    {
+        Debug.Log("Invalid output received");
+
+        if (OnInvalidOutputReceived != null)
+            OnInvalidOutputReceived("Invalid output received");
+    }
+
     protected override void ThreadedFunction()
     {
         // Read serial data - don't use any Unity API
-        _OutputArray[StrideCount] = _Stream.ReadByte();
+        m_output = 0;
+        m_output = _Stream.ReadByte();
+        _OutputArray[StrideCount] = m_output;
+
+        //Debug.Log("Threaded Output : " + m_output);
+
         StrideCount++;
     }
 
     public static bool BandUpdate = false;
     protected override void OnFinished()
     {
+        //Debug.Log("OnFinished Output : " + m_output);
         //_StrideCount++;
+        if (m_output == m_invalidValue)
+        {
+            InvalidOutputReceived();
+        }
 
         // Executed by main Unity thread when job is completed
-        if (StrideCount >= _StrideLength)
+        else if (StrideCount >= _StrideLength)
         {
             // Compare cached array to new array
             if (!_OutputArray.SequenceEqual(_CachedArray))
