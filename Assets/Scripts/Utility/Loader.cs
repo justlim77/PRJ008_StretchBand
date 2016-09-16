@@ -38,18 +38,18 @@ public class Loader : MonoBehaviour
 	
 	bool InitializeManagers()
     {
-        if (AudioManager.Instance == null)
-        {
-            GameObject audioManager = Instantiate(AudioManagerPrefab);
-            audioManager.name = AudioManagerPrefab.name;
-            Debug.LogWarning("AudioManager not found. Creating instance of AudioManager.");
-        }
-
         if(AudioDatabase.Instance == null)
         {
             GameObject audioDatabase = Instantiate(AudioDatabasePrefab);
             audioDatabase.name = AudioDatabasePrefab.name;
             Debug.LogWarning("AudioDatabase not found. Creating instance of AudioDatabase.");
+        }
+
+        if (AudioManager.Instance == null)
+        {
+            GameObject audioManager = Instantiate(AudioManagerPrefab);
+            audioManager.name = AudioManagerPrefab.name;
+            Debug.LogWarning("AudioManager not found. Creating instance of AudioManager.");
         }
 
         if (KinectManager.Instance == null)

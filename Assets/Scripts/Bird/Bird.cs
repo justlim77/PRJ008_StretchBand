@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define USE_BAND
+
+using UnityEngine;
 using System.Collections;
 using System;
 using DG.Tweening;
@@ -329,8 +331,12 @@ public class Bird : MonoBehaviour
 
     bool BoostDetected()
     {
+#if USE_BAND
         return ((Input.GetKeyDown(BoostKey) || _ArduinoController.ForceDetected(ForceThreshold, true)) && forceApplied == false);
-    }    
+#else
+        return ((Input.GetKeyDown(BoostKey) || FlightGestureListener.Instance.IsTPose()) && forceApplied == false);
+#endif
+    }
 
     void Boost()
     {

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define USE_BAND
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Text;
@@ -27,6 +29,8 @@ public class ArduinoUI : MonoBehaviour
     [Header("Messages")]
     [TextArea]
     public string PregameMessage;
+    [TextArea]
+    public string BandlessPregameMessage;
     [TextArea]
     public string PostgameMessage;
     public string[] BoostMessages;
@@ -103,10 +107,14 @@ public class ArduinoUI : MonoBehaviour
 
     private void FlightGestureListener_OnPrimaryUserFound(string obj)
     {
+#if USE_BAND
         if (BandConnectJob.BandFound)
             UpdateMessage(PregameMessage);
         else
             UpdateMessage(obj + "\nPower on the band");
+#else
+        UpdateMessage(BandlessPregameMessage);
+#endif
     }
 
     void OnDisable()
@@ -133,7 +141,11 @@ public class ArduinoUI : MonoBehaviour
         switch (e.BoostState)
         {
             case BoostState.Ignition:
+#if USE_BAND
                 UpdateMessage("Energy Up!\nPull band to boost!", 5);
+#else
+                UpdateMessage("Energy Up!\nSpread wings to glide!", 5);
+#endif
                 break;
             case BoostState.Boosting:
                 string msg = BoostMessages[UnityEngine.Random.Range(0, BoostMessages.Length)];
@@ -156,10 +168,17 @@ public class ArduinoUI : MonoBehaviour
         {
             case GameState.Pregame:
                 UpdateTimer(e.GameDuration);
+#if USE_BAND
                 if (FlightGestureListener.Instance.IsPrimaryUserCurrentlyDetected && BandConnectJob.BandFound)
                     UpdateMessage(PregameMessage);
                 else if (!BandConnectJob.BandFound)
                     UpdateMessage("Searching for band...");
+#else
+                if (FlightGestureListener.Instance.IsPrimaryUserCurrentlyDetected)
+                    UpdateMessage(BandlessPregameMessage);
+                else
+                    UpdateMessage("Raise your right hand to play");
+#endif
                 //else
                 //    UpdateMessage();
                 _DistanceToTravel = e.DistanceToTravel;

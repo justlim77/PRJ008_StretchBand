@@ -26,6 +26,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
     private bool swipeLeft;
     private bool swipeRight;
     private bool swipeUp;
+    private bool tpose;
 
     private bool primaryUserDetected;
     private bool primaryUserLost;
@@ -35,7 +36,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
     {
         get { return _isPrimaryUserCurrentlyDetected; }
         set { _isPrimaryUserCurrentlyDetected = value;
-            Debug.Log(value);
+            Debug.Log(string.Format("Primary user detected: {0}", value));
         }
     }
 
@@ -97,6 +98,21 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
     }
 
     /// <summary>
+    /// Determines whether t-pose is detected.
+    /// </summary>
+    /// <returns><c>true</c> if tpose is detected; otherwise, <c>false</c>.</returns>
+    public bool IsTPose()
+    {
+        if (tpose)
+        {
+            tpose = false;
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Determines whether primary user is detected.
     /// </summary>
     /// <returns><c>true</c> if primary user is detected; otherwise, <c>false</c>.</returns>
@@ -145,7 +161,7 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
         // detect these user specific gestures
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeLeft);
         manager.DetectGesture(userId, KinectGestures.Gestures.SwipeRight);
-        manager.DetectGesture(userId, KinectGestures.Gestures.SwipeUp);
+        manager.DetectGesture(userId, KinectGestures.Gestures.SpreadWings);
 
         primaryUserDetected = true;
         IsPrimaryUserCurrentlyDetected = true;
@@ -242,6 +258,20 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
                 progressGestureTime = Time.realtimeSinceStartup;
             }
         }
+        else if (gesture == KinectGestures.Gestures.SpreadWings && progress > 0.5f)
+        {
+            if (gestureInfo != null)
+            {
+                string sGestureText = string.Format("{0} - progress: {1:F0}%", gesture, progress * 100);
+                gestureInfo.GetComponent<GUIText>().text = sGestureText;
+
+                progressDisplayed = true;
+                progressGestureTime = Time.realtimeSinceStartup;
+            }
+
+            tpose = true;
+            Debug.Log("Spreading wings");
+        }
     }
 
     /// <summary>
@@ -273,9 +303,9 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
             GameManager gm = GameManager.Instance;
             if (gm)
             {
-                if(gm.GameState == GameState.Postgame)
+                if (gm.GameState == GameState.Postgame)
                     SceneManager.LoadScene(0);
-            } 
+            }
         }
         else if (gesture == KinectGestures.Gestures.SwipeRight)
         {
@@ -287,8 +317,6 @@ public class FlightGestureListener : MonoBehaviour, KinectGestures.GestureListen
                     gm.SetState(GameState.Pregame);
             }
         }
-        else if (gesture == KinectGestures.Gestures.SwipeUp)
-            swipeUp = true;
 
         return true;
     }

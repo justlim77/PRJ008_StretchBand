@@ -20,15 +20,15 @@ public class ArduinoController : MonoBehaviour
 
     private StringBuilder _sb;
 
-    void OnEnable()
-    {
-        ArduinoConnector.OutputReceived += OnOutputReceived;
-    }
+    //void OnEnable()
+    //{
+    //    ArduinoConnector.OutputReceived += OnOutputReceived;
+    //}
 
-    void OnDisable()
-    {
-        ArduinoConnector.OutputReceived -= OnOutputReceived;
-    }
+    //void OnDisable()
+    //{
+    //    ArduinoConnector.OutputReceived -= OnOutputReceived;
+    //}
 
     private void OnOutputReceived(object sender, OutputReceivedEventArgs e)
     {

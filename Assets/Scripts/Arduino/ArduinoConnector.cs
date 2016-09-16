@@ -85,7 +85,7 @@ public class ArduinoConnector : MonoBehaviour
 
     void Start()
     {
-        StartBandConnection();
+        //StartBandConnection();
     }
 
     void StartBandConnection()

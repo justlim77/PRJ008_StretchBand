@@ -40,7 +40,7 @@ public class PanelPresentationScript : MonoBehaviour
 
     private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
-        StartCoroutine(OnLevelWasLoaded());
+        StartCoroutine(LevelLoaded());
     }
 
     // Update is called once per frame
@@ -70,11 +70,10 @@ public class PanelPresentationScript : MonoBehaviour
         LevelPanel.SetOrientation(PanelOrientation.Left, _Scaler.referenceResolution);
     }
 
-    IEnumerator OnLevelWasLoaded()
+    IEnumerator LevelLoaded()
     {
         KinectManager.Instance.refreshAvatarControllers();
         KinectManager.Instance.refreshGestureListeners();
         yield return new WaitForEndOfFrame();
-
     }
 }
